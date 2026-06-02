@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restu · Descubre</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f3;
+  --bg2: #f2efe8;
+  --surface: #ffffff;
+  --border: #e8e4d8;
+  --green: #1a6b47;
+  --green-mid: #2d9e6b;
+  --green-pale: #e8f5ee;
+  --gold: #c8973a;
+  --gold-pale: #fdf3e0;
+  --red: #d94f3d;
+  --dark: #1a1a18;
+  --mid: #4a4a44;
+  --light: #9a9a90;
+  --lighter: #c8c4b8;
+  --white: #ffffff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 18px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--dark);
+  letter-spacing: -0.5px;
+}
+
+.logo span { color: var(--green); }
+
+.header-right { display: flex; align-items: center; gap: 10px; }
+
+.location-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--mid);
+  background: var(--bg2);
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.location-chip svg { width:11px; height:11px; stroke:var(--green); fill:none; stroke-width:2.5; stroke-linecap:round; }
+
+.avatar-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--green-pale);
+  border: 2px solid var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* SEARCH */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 9px 14px;
+  cursor: text;
+}
+
+.search-bar svg { width:15px; height:15px; stroke:var(--light); fill:none; stroke-width:2; stroke-linecap:round; flex-shrink:0; }
+.search-placeholder { font-size:13px; color:var(--lighter); }
+
+/* FILTER CHIPS */
+.filter-row {
+  display: flex;
+  gap: 7px;
+  padding: 12px 18px 0;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--mid);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.filter-chip.active {
+  background: var(--green);
+  color: white;
+  border-color: var(--green);
+}
+
+/* SCREENS */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* SECTION LABEL */
+.slabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  padding: 16px 18px 10px;
+}
+
+.slabel-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--light);
+  font-family: 'DM Sans', sans-serif;
+  margin-left: 6px;
+}
+
+/* OFERTA DEL DÍA — destacada */
+.oferta-banner {
+  margin: 10px 18px;
+  background: linear-gradient(135deg, #1a6b47 0%, #2d9e6b 100%);
+  border-radius: 16px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.oferta-banner::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 25px solid rgba(255,255,255,0.08);
+}
+
+.oferta-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.oferta-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 3px;
+}
+
+.oferta-resto {
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 12px;
+}
+
+.oferta-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.oferta-precio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.precio-nuevo {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+}
+
+.precio-viejo {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: line-through;
+}
+
+.oferta-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background: white;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.oferta-btn:hover { background: var(--green-pale); }
+
+/* RESTO CARD GRANDE */
+.resto-card-lg {
+  margin: 0 18px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.resto-card-lg:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.resto-card-img {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  position: relative;
+}
+
+.destacado-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--gold);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.favorito-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.favorito-btn svg { width:14px; height:14px; stroke:var(--mid); fill:none; stroke-width:2; stroke-linecap:round; }
+.favorito-btn.active svg { stroke:var(--red); fill:var(--red); }
+
+.resto-card-body { padding: 12px 14px; }
+
+.resto-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.resto-card-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.resto-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.star { color: var(--gold); font-size: 12px; }
+
+.resto-card-meta {
+  font-size: 11px;
+  color: var(--light);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resto-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+.rtag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--green-pale);
+  color: var(--green);
+}
+
+.rtag.gold { background: var(--gold-pale); color: var(--gold); }
+
+/* RESTO CARD PEQUEÑA (lista) */
+.resto-card-sm {
+  margin: 0 18px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.resto-card-sm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.resto-sm-emoji {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.resto-sm-body { flex: 1; min-width: 0; }
+.resto-sm-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.resto-sm-meta { font-size: 11px; color: var(--light); margin-bottom: 4px; }
+.resto-sm-tags { display: flex; gap: 4px; }
+.resto-sm-tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 20px; background: var(--bg2); color: var(--mid); }
+
+.resto-sm-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.sm-rating { font-size: 12px; font-weight: 700; color: var(--dark); }
+.sm-open { font-size: 10px; font-weight: 600; color: var(--green); }
+.sm-closed { font-size: 10px; font-weight: 600; color: var(--red); }
+
+/* NAV BOTTOM */
+.nav-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 8px 0 12px;
+  z-index: 200;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-item svg { width:20px; height:20px; stroke:var(--lighter); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:stroke 0.15s; }
+.nav-item span { font-size:10px; color:var(--lighter); font-weight:500; transition:color 0.15s; }
+.nav-item.active svg { stroke:var(--green); }
+.nav-item.active span { color:var(--green); }
+
+/* MAPA PLACEHOLDER */
+.mapa-placeholder {
+  margin: 10px 18px;
+  height: 200px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--light);
+}
+
+.mapa-placeholder svg { width:32px; height:32px; stroke:var(--lighter); fill:none; stroke-width:1.5; stroke-linecap:round; }
+
+/* PERFIL SCREEN */
+.perfil-header {
+  padding: 24px 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.perfil-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--green-pale);
+  border: 3px solid var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--green);
+  flex-shrink: 0;
+}
+
+.perfil-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--dark); }
+.perfil-sub { font-size: 12px; color: var(--light); margin-top: 2px; }
+
+.perfil-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0 18px 16px;
+}
+
+.pstat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.pstat-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--dark); }
+.pstat-label { font-size: 10px; color: var(--light); margin-top: 2px; }
+
+.favoritos-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+  padding: 0 18px 10px;
+}
+
+/* BOTTOM PADDING */
+.bottom-pad { height: 90px; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.screen.active > * {
+  animation: fadeUp 0.25s ease forwards;
+  opacity: 0;
+}
+.screen.active > *:nth-child(1) { animation-delay: 0s; }
+.screen.active > *:nth-child(2) { animation-delay: 0.05s; }
+.screen.active > *:nth-child(3) { animation-delay: 0.1s; }
+.screen.active > *:nth-child(4) { animation-delay: 0.15s; }
+.screen.active > *:nth-child(5) { animation-delay: 0.2s; }
+.screen.active > *:nth-child(6) { animation-delay: 0.25s; }
+.screen.active > *:nth-child(7) { animation-delay: 0.3s; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">res<span>tu</span></div>
+    <div class="header-right">
+      <div class="location-chip">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Salt, Girona
+      </div>
+      <div class="avatar-btn">MK</div>
+    </div>
+  </div>
+  <div class="search-bar">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span class="search-placeholder">Busca restaurante o plato…</span>
+  </div>
+</div>
+
+<!-- FILTER CHIPS -->
+<div class="filter-row">
+  <div class="filter-chip active" onclick="setFilter(this)">Todos</div>
+  <div class="filter-chip" onclick="setFilter(this)">🌍 Africano</div>
+  <div class="filter-chip" onclick="setFilter(this)">🥙 Kebab</div>
+  <div class="filter-chip" onclick="setFilter(this)">🫖 Marroquí</div>
+  <div class="filter-chip" onclick="setFilter(this)">🍽️ Mediterráneo</div>
+  <div class="filter-chip" onclick="setFilter(this)">⭐ Mejor valorados</div>
+  <div class="filter-chip" onclick="setFilter(this)">🟢 Abierto ahora</div>
+</div>
+
+<!-- ═══ DESCUBRE ═══ -->
+<div id="screen-descubre" class="screen active">
+
+  <!-- Oferta del día -->
+  <div class="slabel">🔥 Oferta del día <span class="slabel-sub">patrocinado</span></div>
+
+  <div class="oferta-banner">
+    <div class="oferta-tag">⚡ Solo hoy · Al-Waha</div>
+    <div class="oferta-name">Pollo Yassa</div>
+    <div class="oferta-resto">Carrer Major, 14 · Salt · Abierto ahora</div>
+    <div class="oferta-footer">
+      <div class="oferta-precio">
+        <div class="precio-nuevo">7,50€</div>
+        <div class="precio-viejo">9,50€</div>
+      </div>
+      <button class="oferta-btn">Ver restaurante</button>
+    </div>
+  </div>
+
+  <!-- Cerca de ti -->
+  <div class="slabel">📍 Cerca de ti <span class="slabel-sub">Salt · 5 restaurantes</span></div>
+
+  <div class="resto-card-lg">
+    <div class="resto-card-img" style="background:linear-gradient(135deg,#e8f5ee,#c8e8d8);">
+      🍗
+      <span class="destacado-badge">⭐ Destacado</span>
+      <button class="favorito-btn active" onclick="toggleFav(this)">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+    </div>
+    <div class="resto-card-body">
+      <div class="resto-card-top">
+        <div class="resto-card-name">Al-Waha</div>
+        <div class="resto-rating"><span class="star">★</span> 4.2 <span style="font-size:10px;color:var(--light);font-weight:400;">(87)</span></div>
+      </div>
+      <div class="resto-card-meta">
+        Cocina africana · Carrer Major, 14
+        <span style="color:var(--green);font-weight:600;">Abierto</span>
+      </div>
+      <div class="resto-tags">
+        <span class="rtag">Halal</span>
+        <span class="rtag">Senegalés</span>
+        <span class="rtag">Marroquí</span>
+        <span class="rtag gold">⚡ Oferta hoy</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="resto-card-lg">
+    <div class="resto-card-img" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">
+      🥙
+      <button class="favorito-btn" onclick="toggleFav(this)">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+    </div>
+    <div class="resto-card-body">
+      <div class="resto-card-top">
+        <div class="resto-card-name">Kebab Istanbul</div>
+        <div class="resto-rating"><span class="star">★</span> 4.0 <span style="font-size:10px;color:var(--light);font-weight:400;">(54)</span></div>
+      </div>
+      <div class="resto-card-meta">
+        Kebab · Turco · Av. de França, 8
+        <span style="color:var(--green);font-weight:600;">Abierto</span>
+      </div>
+      <div class="resto-tags">
+        <span class="rtag">Halal</span>
+        <span class="rtag">Kebab</span>
+        <span class="rtag">Rápido</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Más restaurantes -->
+  <div class="slabel">🗺️ Todos en Salt</div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#f3e5f5;">🫖</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">Chez Mamadou</div>
+      <div class="resto-sm-meta">Africano · C/ de la Pau, 3</div>
+      <div class="resto-sm-tags">
+        <span class="resto-sm-tag">Senegalés</span>
+        <span class="resto-sm-tag">Halal</span>
+      </div>
+    </div>
+    <div class="resto-sm-right">
+      <div class="sm-rating">★ 4.4</div>
+      <div class="sm-open">Abierto</div>
+    </div>
+  </div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#e3f2fd;">🐟</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">La Mar Salada</div>
+      <div class="resto-sm-meta">Mediterráneo · Plaça Major, 2</div>
+      <div class="resto-sm-tags">
+        <span class="resto-sm-tag">Pescado</span>
+        <span class="resto-sm-tag">Paella</span>
+      </div>
+    </div>
+    <div class="resto-sm-right">
+      <div class="sm-rating">★ 4.1</div>
+      <div class="sm-open">Abierto</div>
+    </div>
+  </div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#fce4ec;">🥗</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">Casa Hassan</div>
+      <div class="resto-sm-meta">Marroquí · C/ Nou, 17</div>
+      <div class="resto-sm-tags">
+        <span class="resto-sm-tag">Cuscús</span>
+        <span class="resto-sm-tag">Halal</span>
+      </div>
+    </div>
+    <div class="resto-sm-right">
+      <div class="sm-rating">★ 3.8</div>
+      <div class="sm-closed">Cerrado</div>
+    </div>
+  </div>
+
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ═══ MAPA ═══ -->
+<div id="screen-mapa" class="screen">
+  <div class="slabel">Mapa · Salt y Girona</div>
+  <div class="mapa-placeholder">
+    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    <div style="font-size:13px;font-weight:500;">Mapa interactivo</div>
+    <div style="font-size:11px;">Se integrará con Google Maps</div>
+  </div>
+
+  <div class="slabel">En el mapa</div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#e8f5ee;">🍗</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">Al-Waha</div>
+      <div class="resto-sm-meta">200m · Carrer Major, 14</div>
+      <div class="resto-sm-tags"><span class="resto-sm-tag">Destacado</span></div>
+    </div>
+    <div class="resto-sm-right">
+      <div class="sm-rating">★ 4.2</div>
+      <div class="sm-open">Abierto</div>
+    </div>
+  </div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#fff3e0;">🥙</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">Kebab Istanbul</div>
+      <div class="resto-sm-meta">350m · Av. de França, 8</div>
+      <div class="resto-sm-tags"><span class="resto-sm-tag">Kebab</span></div>
+    </div>
+    <div class="resto-sm-right">
+      <div class="sm-rating">★ 4.0</div>
+      <div class="sm-open">Abierto</div>
+    </div>
+  </div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#f3e5f5;">🫖</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">Chez Mamadou</div>
+      <div class="resto-sm-meta">500m · C/ de la Pau, 3</div>
+      <div class="resto-sm-tags"><span class="resto-sm-tag">Africano</span></div>
+    </div>
+    <div class="resto-sm-right">
+      <div class="sm-rating">★ 4.4</div>
+      <div class="sm-open">Abierto</div>
+    </div>
+  </div>
+
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ═══ FAVORITOS ═══ -->
+<div id="screen-favoritos" class="screen">
+  <div class="slabel">❤️ Mis favoritos</div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#e8f5ee;">🍗</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">Al-Waha</div>
+      <div class="resto-sm-meta">Africano · Salt · 3 visitas</div>
+      <div class="resto-sm-tags">
+        <span class="resto-sm-tag">Favorito</span>
+        <span class="resto-sm-tag">Halal</span>
+      </div>
+    </div>
+    <div class="resto-sm-right">
+      <div class="sm-rating">★ 4.2</div>
+      <div class="sm-open">Abierto</div>
+    </div>
+  </div>
+
+  <div style="margin:20px 18px;text-align:center;">
+    <div style="font-size:13px;color:var(--light);line-height:1.6;">Guarda tus restaurantes favoritos tocando el ❤️ en cualquier perfil</div>
+  </div>
+
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ═══ PERFIL USUARIO ═══ -->
+<div id="screen-perfil" class="screen">
+
+  <div class="perfil-header">
+    <div class="perfil-avatar">MK</div>
+    <div>
+      <div class="perfil-name">Moussa K.</div>
+      <div class="perfil-sub">Salt, Girona · Miembro desde mayo 2025</div>
+    </div>
+  </div>
+
+  <div class="perfil-stats">
+    <div class="pstat">
+      <div class="pstat-val">12</div>
+      <div class="pstat-label">Reseñas</div>
+    </div>
+    <div class="pstat">
+      <div class="pstat-val">4</div>
+      <div class="pstat-label">Favoritos</div>
+    </div>
+    <div class="pstat">
+      <div class="pstat-val">8</div>
+      <div class="pstat-label">Visitas</div>
+    </div>
+  </div>
+
+  <div class="favoritos-title">Mis últimas reseñas</div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#e8f5ee;">🍗</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">Al-Waha</div>
+      <div class="resto-sm-meta">Pollo Yassa · hace 2 días</div>
+      <div class="resto-sm-tags"><span class="resto-sm-tag" style="color:var(--gold);">★★★★★</span></div>
+    </div>
+    <div class="resto-sm-right">
+      <div style="font-size:11px;color:var(--light);">Ver</div>
+    </div>
+  </div>
+
+  <div class="resto-card-sm">
+    <div class="resto-sm-emoji" style="background:#fff3e0;">🥙</div>
+    <div class="resto-sm-body">
+      <div class="resto-sm-name">Kebab Istanbul</div>
+      <div class="resto-sm-meta">Kebab Mixto · hace 1 semana</div>
+      <div class="resto-sm-tags"><span class="resto-sm-tag" style="color:var(--gold);">★★★★☆</span></div>
+    </div>
+    <div class="resto-sm-right">
+      <div style="font-size:11px;color:var(--light);">Ver</div>
+    </div>
+  </div>
+
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- NAV BOTTOM -->
+<div class="nav-bottom">
+  <div class="nav-item active" id="nav-descubre" onclick="showNav('descubre', this)">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span>Descubre</span>
+  </div>
+  <div class="nav-item" id="nav-mapa" onclick="showNav('mapa', this)">
+    <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    <span>Mapa</span>
+  </div>
+  <div class="nav-item" id="nav-favoritos" onclick="showNav('favoritos', this)">
+    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <span>Favoritos</span>
+  </div>
+  <div class="nav-item" id="nav-perfil" onclick="showNav('perfil', this)">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Mi perfil</span>
+  </div>
+</div>
+
+<script>
+function showNav(name, item) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  item.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function setFilter(el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleFav(btn) {
+  btn.classList.toggle('active');
+}
+</script>
+</body>
+</html>

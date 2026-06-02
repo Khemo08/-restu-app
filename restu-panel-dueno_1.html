@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restu · Panel Al-Waha</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1a14;
+  --bg2: #162010;
+  --surface: #1c2b1e;
+  --surface2: #243527;
+  --border: #2d4030;
+  --green: #3ecf78;
+  --green-dim: #2a8f53;
+  --green-pale: rgba(62,207,120,0.1);
+  --gold: #f0b429;
+  --gold-pale: rgba(240,180,41,0.12);
+  --red: #f87171;
+  --red-pale: rgba(248,113,113,0.1);
+  --blue: #60a5fa;
+  --blue-pale: rgba(96,165,250,0.1);
+  --text: #e8f0ea;
+  --text2: #8fa896;
+  --text3: #5a7060;
+  --white: #ffffff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+/* TOP BAR */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--white);
+  letter-spacing: -0.5px;
+}
+
+.logo span { color: var(--green); }
+
+.resto-tag {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  background: var(--surface2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+.notif-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.notif-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 1.5px solid var(--surface);
+}
+
+.notif-btn svg { width:15px; height:15px; stroke:var(--text2); fill:none; stroke-width:2; stroke-linecap:round; }
+
+/* NAV */
+.nav-tabs {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.nav-tab {
+  flex: 1;
+  min-width: 70px;
+  padding: 12px 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.nav-tab.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+  font-weight: 600;
+}
+
+/* SCREENS */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* SECTION LABEL */
+.slabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 16px 18px 8px;
+}
+
+/* METRIC CARDS */
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 18px;
+  margin-bottom: 4px;
+}
+
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.metric-label {
+  font-size: 10px;
+  color: var(--text2);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.metric-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.metric-delta {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.up { color: var(--green); }
+.down { color: var(--red); }
+.neutral { color: var(--text2); }
+
+/* RATING SUMMARY */
+.rating-summary {
+  margin: 10px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.rating-big {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.rating-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.stars { color: var(--gold); font-size: 13px; letter-spacing: 1px; margin: 3px 0; }
+.rating-total { font-size: 10px; color: var(--text2); }
+
+.cat-bars { flex: 1; }
+
+.cat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.cat-label { font-size: 10px; color: var(--text2); width: 52px; flex-shrink: 0; }
+
+.bar-track {
+  flex: 1;
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar-fill { height: 100%; border-radius: 2px; }
+.bar-green { background: var(--green); }
+.bar-gold { background: var(--gold); }
+.bar-red { background: var(--red); }
+
+.cat-val { font-size: 10px; font-weight: 600; color: var(--text); width: 22px; text-align: right; }
+
+/* AI BOX */
+.ai-box {
+  margin: 10px 18px;
+  background: linear-gradient(135deg, rgba(62,207,120,0.08) 0%, rgba(62,207,120,0.03) 100%);
+  border: 1px solid rgba(62,207,120,0.2);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.ai-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-item {
+  display: flex;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(62,207,120,0.1);
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+  align-items: flex-start;
+}
+
+.ai-item:last-child { border-bottom: none; padding-bottom: 0; }
+.ai-num { color: var(--green); font-weight: 700; flex-shrink: 0; font-size: 13px; }
+
+/* RESEÑAS RECIENTES */
+.resena-card {
+  margin: 4px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px;
+  margin-bottom: 8px;
+}
+
+.resena-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.resena-meta { flex: 1; }
+.resena-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.resena-date { font-size: 10px; color: var(--text3); }
+.resena-stars { color: var(--gold); font-size: 11px; }
+
+.resena-text {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.resena-cats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.rcat {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+
+.rcat strong { color: var(--text); }
+
+.responder-btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+
+.responder-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* CARTA SCREEN */
+.carta-item {
+  margin: 4px 18px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.carta-emoji { font-size: 22px; flex-shrink: 0; }
+
+.carta-body { flex: 1; min-width: 0; }
+.carta-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.carta-desc { font-size: 11px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.carta-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.carta-price { font-size: 13px; font-weight: 700; color: var(--green); }
+
+.toggle {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--green);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.toggle.off { background: var(--surface2); border: 1px solid var(--border); }
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  top: 3px;
+  right: 3px;
+  transition: right 0.2s;
+}
+
+.toggle.off::after { right: auto; left: 3px; }
+
+.add-plato-btn {
+  margin: 8px 18px 4px;
+  width: calc(100% - 36px);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1.5px dashed var(--border);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text3);
+  cursor: pointer;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+
+.add-plato-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* QR SCREEN */
+.qr-card {
+  margin: 10px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.qr-box {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 16px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.qr-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.qr-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.qr-sub {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.qr-btns { display: flex; gap: 8px; }
+
+.qr-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+
+.qr-btn-primary { background: var(--green); color: var(--bg); }
+.qr-btn-primary:hover { background: #5fffA0; }
+.qr-btn-secondary { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+.qr-btn-secondary:hover { border-color: var(--green); color: var(--green); }
+
+.material-card {
+  margin: 4px 18px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mat-info { display: flex; align-items: center; gap: 10px; }
+.mat-emoji { font-size: 20px; }
+.mat-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.mat-desc { font-size: 10px; color: var(--text3); }
+
+.mat-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+
+.mat-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* PERFIL SCREEN */
+.perfil-card {
+  margin: 10px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.form-group { margin-bottom: 12px; }
+
+.form-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  margin-bottom: 5px;
+  display: block;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 13px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.15s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--green-dim);
+}
+
+.tag-selector {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag-opt {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tag-opt.selected {
+  background: var(--green-pale);
+  border-color: var(--green-dim);
+  color: var(--green);
+}
+
+.save-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: none;
+  background: var(--green);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: all 0.15s;
+  margin-top: 4px;
+}
+
+.save-btn:hover { background: #5fffA0; }
+
+/* PLAN BADGE */
+.plan-badge {
+  margin: 10px 18px 0;
+  background: var(--gold-pale);
+  border: 1px solid rgba(240,180,41,0.2);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.plan-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.plan-sub { font-size: 10px; color: var(--text3); margin-top: 1px; }
+
+.plan-price {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+/* BOTTOM SPACE */
+.bottom-space { height: 28px; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.screen.active > * {
+  animation: fadeUp 0.25s ease forwards;
+  opacity: 0;
+}
+
+.screen.active > *:nth-child(1) { animation-delay: 0s; }
+.screen.active > *:nth-child(2) { animation-delay: 0.04s; }
+.screen.active > *:nth-child(3) { animation-delay: 0.08s; }
+.screen.active > *:nth-child(4) { animation-delay: 0.12s; }
+.screen.active > *:nth-child(5) { animation-delay: 0.16s; }
+.screen.active > *:nth-child(6) { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">res<span>tu</span></div>
+  <div class="resto-tag">Al-Waha · Salt</div>
+  <div class="notif-btn">
+    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <div class="notif-dot"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showScreen('resumen', this)">Resumen</div>
+  <div class="nav-tab" onclick="showScreen('resenas', this)">Reseñas</div>
+  <div class="nav-tab" onclick="showScreen('carta', this)">Carta</div>
+  <div class="nav-tab" onclick="showScreen('qr', this)">QR</div>
+  <div class="nav-tab" onclick="showScreen('perfil', this)">Perfil</div>
+</div>
+
+<!-- ═══ RESUMEN ═══ -->
+<div id="screen-resumen" class="screen active">
+
+  <div class="plan-badge">
+    <div>
+      <div class="plan-name">⭐ Pack Crecimiento</div>
+      <div class="plan-sub">Renovación: 1 de junio · Activo</div>
+    </div>
+    <div class="plan-price">129€/mes</div>
+  </div>
+
+  <div class="slabel">Este mes · Mayo 2025</div>
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Visitas al perfil</div>
+      <div class="metric-val">1.240</div>
+      <div class="metric-delta up">↑ +18% vs abril</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Reseñas nuevas</div>
+      <div class="metric-val">23</div>
+      <div class="metric-delta up">↑ +5 este mes</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Valoración media</div>
+      <div class="metric-val">4.2</div>
+      <div class="metric-delta neutral">→ Sin cambio</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Tiempo servicio</div>
+      <div class="metric-val">18m</div>
+      <div class="metric-delta down">↑ +3 min vs abril</div>
+    </div>
+  </div>
+
+  <div class="rating-summary">
+    <div class="rating-big">
+      <div class="rating-num">4.2</div>
+      <div class="stars">★★★★☆</div>
+      <div class="rating-total">87 reseñas</div>
+    </div>
+    <div class="cat-bars">
+      <div class="cat-row">
+        <div class="cat-label">Comida</div>
+        <div class="bar-track"><div class="bar-fill bar-green" style="width:88%"></div></div>
+        <div class="cat-val">4.4</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-label">Personal</div>
+        <div class="bar-track"><div class="bar-fill bar-green" style="width:84%"></div></div>
+        <div class="cat-val">4.2</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-label">Limpieza</div>
+        <div class="bar-track"><div class="bar-fill bar-gold" style="width:80%"></div></div>
+        <div class="cat-val">4.0</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-label">Servicio</div>
+        <div class="bar-track"><div class="bar-fill bar-red" style="width:60%"></div></div>
+        <div class="cat-val" style="color:var(--red)">3.0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Recomendaciones IA · Mayo
+    </div>
+    <div class="ai-item">
+      <span class="ai-num">1.</span>
+      <span>El tiempo de servicio subió a 18 min. Prepara el yassa y el thiéboudiène en lotes en hora punta.</span>
+    </div>
+    <div class="ai-item">
+      <span class="ai-num">2.</span>
+      <span>La sopa de maní tiene pocas menciones. Valora retirarla o sustituirla por algo más popular.</span>
+    </div>
+    <div class="ai-item">
+      <span class="ai-num">3.</span>
+      <span>"Sin carta en español" aparece en 9 reseñas. Ya la tienes en 3 idiomas — recuérdalo a los clientes.</span>
+    </div>
+    <div class="ai-item">
+      <span class="ai-num">4.</span>
+      <span>El pollo yassa tiene 31 menciones positivas. Ponlo como oferta especial un día de semana para atraer más visitas.</span>
+    </div>
+  </div>
+
+  <div class="bottom-space"></div>
+</div>
+
+<!-- ═══ RESEÑAS ═══ -->
+<div id="screen-resenas" class="screen">
+
+  <div class="slabel">Últimas reseñas — responde para mejorar tu nota</div>
+
+  <div class="resena-card">
+    <div class="resena-header">
+      <div class="avatar" style="background:rgba(62,207,120,0.15);color:var(--green);">AM</div>
+      <div class="resena-meta">
+        <div class="resena-name">Amina M. <span class="resena-stars">★★★★★</span></div>
+        <div class="resena-date">hace 2 días · Pollo Yassa</div>
+      </div>
+    </div>
+    <div class="resena-text">"El yassa estaba increíble, como en casa. El personal muy amable y la ración enorme."</div>
+    <div class="resena-cats">
+      <span class="rcat">Comida <strong>5.0</strong></span>
+      <span class="rcat">Personal <strong>5.0</strong></span>
+      <span class="rcat">Servicio <strong>3.0</strong></span>
+    </div>
+    <button class="responder-btn">✉️ Responder a Amina</button>
+  </div>
+
+  <div class="resena-card">
+    <div class="resena-header">
+      <div class="avatar" style="background:rgba(96,165,250,0.15);color:var(--blue);">JL</div>
+      <div class="resena-meta">
+        <div class="resena-name">Josep L. <span class="resena-stars">★★★★☆</span></div>
+        <div class="resena-date">hace 5 días · Kebab Mixto</div>
+      </div>
+    </div>
+    <div class="resena-text">"Muy buena comida y precio justo. Tardaron un poco pero mereció la espera totalmente."</div>
+    <div class="resena-cats">
+      <span class="rcat">Comida <strong>4.5</strong></span>
+      <span class="rcat">Limpieza <strong>4.0</strong></span>
+      <span class="rcat">Servicio <strong>3.5</strong></span>
+    </div>
+    <button class="responder-btn">✉️ Responder a Josep</button>
+  </div>
+
+  <div class="resena-card">
+    <div class="resena-header">
+      <div class="avatar" style="background:rgba(240,180,41,0.15);color:var(--gold);">FD</div>
+      <div class="resena-meta">
+        <div class="resena-name">Fatou D. <span class="resena-stars">★★★★★</span></div>
+        <div class="resena-date">hace 1 semana · Thiéboudiène</div>
+      </div>
+    </div>
+    <div class="resena-text">"Le thiéboudiène est excellent ! Ça me rappelle la cuisine de ma maman à Dakar."</div>
+    <div class="resena-cats">
+      <span class="rcat">Comida <strong>5.0</strong></span>
+      <span class="rcat">Personal <strong>4.5</strong></span>
+      <span class="rcat">Servicio <strong>4.0</strong></span>
+    </div>
+    <button class="responder-btn">✉️ Responder a Fatou</button>
+  </div>
+
+  <div class="bottom-space"></div>
+</div>
+
+<!-- ═══ CARTA ═══ -->
+<div id="screen-carta" class="screen">
+
+  <div class="slabel">Gestiona tu carta — activa o desactiva platos</div>
+
+  <div class="carta-item">
+    <div class="carta-emoji">🍗</div>
+    <div class="carta-body">
+      <div class="carta-name">Pollo Yassa</div>
+      <div class="carta-desc">Marinado con cebolla y limón · arroz</div>
+    </div>
+    <div class="carta-right">
+      <div class="carta-price">9,50€</div>
+      <button class="toggle" onclick="toggleBtn(this)" title="Activo"></button>
+    </div>
+  </div>
+
+  <div class="carta-item">
+    <div class="carta-emoji">🐟</div>
+    <div class="carta-body">
+      <div class="carta-name">Thiéboudiène</div>
+      <div class="carta-desc">Arroz, pescado, verduras, tomate</div>
+    </div>
+    <div class="carta-right">
+      <div class="carta-price">11,00€</div>
+      <button class="toggle" onclick="toggleBtn(this)" title="Activo"></button>
+    </div>
+  </div>
+
+  <div class="carta-item">
+    <div class="carta-emoji">🥙</div>
+    <div class="carta-body">
+      <div class="carta-name">Kebab Mixto</div>
+      <div class="carta-desc">Pollo y ternera · yogur · pita</div>
+    </div>
+    <div class="carta-right">
+      <div class="carta-price">7,50€</div>
+      <button class="toggle" onclick="toggleBtn(this)" title="Activo"></button>
+    </div>
+  </div>
+
+  <div class="carta-item">
+    <div class="carta-emoji">🥜</div>
+    <div class="carta-body">
+      <div class="carta-name">Sopa de Maní</div>
+      <div class="carta-desc">Cacahuete, pollo, especias</div>
+    </div>
+    <div class="carta-right">
+      <div class="carta-price">8,50€</div>
+      <button class="toggle off" onclick="toggleBtn(this)" title="Desactivado"></button>
+    </div>
+  </div>
+
+  <div class="carta-item">
+    <div class="carta-emoji">🥗</div>
+    <div class="carta-body">
+      <div class="carta-name">Ensalada Marroquí</div>
+      <div class="carta-desc">Tomate, pepino, aceitunas, menta</div>
+    </div>
+    <div class="carta-right">
+      <div class="carta-price">4,50€</div>
+      <button class="toggle" onclick="toggleBtn(this)" title="Activo"></button>
+    </div>
+  </div>
+
+  <button class="add-plato-btn">+ Añadir nuevo plato</button>
+
+  <div class="bottom-space"></div>
+</div>
+
+<!-- ═══ QR ═══ -->
+<div id="screen-qr" class="screen">
+
+  <div class="qr-card">
+    <div class="qr-box">
+      <!-- QR simulado con SVG -->
+      <svg class="qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Esquinas QR -->
+        <rect x="5" y="5" width="30" height="30" rx="3" fill="none" stroke="#000" stroke-width="4"/>
+        <rect x="12" y="12" width="16" height="16" fill="#000"/>
+        <rect x="65" y="5" width="30" height="30" rx="3" fill="none" stroke="#000" stroke-width="4"/>
+        <rect x="72" y="12" width="16" height="16" fill="#000"/>
+        <rect x="5" y="65" width="30" height="30" rx="3" fill="none" stroke="#000" stroke-width="4"/>
+        <rect x="12" y="72" width="16" height="16" fill="#000"/>
+        <!-- Datos QR simulados -->
+        <rect x="42" y="5" width="5" height="5" fill="#000"/>
+        <rect x="50" y="5" width="5" height="5" fill="#000"/>
+        <rect x="42" y="13" width="5" height="5" fill="#000"/>
+        <rect x="50" y="13" width="5" height="5" fill="#000"/>
+        <rect x="58" y="13" width="5" height="5" fill="#000"/>
+        <rect x="5" y="42" width="5" height="5" fill="#000"/>
+        <rect x="13" y="42" width="5" height="5" fill="#000"/>
+        <rect x="5" y="50" width="5" height="5" fill="#000"/>
+        <rect x="13" y="50" width="5" height="5" fill="#000"/>
+        <rect x="42" y="42" width="5" height="5" fill="#000"/>
+        <rect x="50" y="42" width="5" height="5" fill="#000"/>
+        <rect x="58" y="42" width="5" height="5" fill="#000"/>
+        <rect x="42" y="50" width="5" height="5" fill="#000"/>
+        <rect x="58" y="50" width="5" height="5" fill="#000"/>
+        <rect x="42" y="58" width="5" height="5" fill="#000"/>
+        <rect x="50" y="58" width="5" height="5" fill="#000"/>
+        <rect x="65" y="42" width="5" height="5" fill="#000"/>
+        <rect x="73" y="42" width="5" height="5" fill="#000"/>
+        <rect x="65" y="50" width="5" height="5" fill="#000"/>
+        <rect x="81" y="50" width="5" height="5" fill="#000"/>
+        <rect x="65" y="58" width="5" height="5" fill="#000"/>
+        <rect x="73" y="58" width="5" height="5" fill="#000"/>
+        <rect x="81" y="58" width="5" height="5" fill="#000"/>
+        <rect x="5" y="65" width="0" height="0" fill="#000"/>
+        <rect x="42" y="65" width="5" height="5" fill="#000"/>
+        <rect x="50" y="65" width="5" height="5" fill="#000"/>
+        <rect x="42" y="73" width="5" height="5" fill="#000"/>
+        <rect x="58" y="73" width="5" height="5" fill="#000"/>
+        <rect x="50" y="81" width="5" height="5" fill="#000"/>
+        <rect x="58" y="81" width="5" height="5" fill="#000"/>
+        <rect x="65" y="65" width="5" height="5" fill="#000"/>
+        <rect x="81" y="65" width="5" height="5" fill="#000"/>
+        <rect x="73" y="73" width="5" height="5" fill="#000"/>
+        <rect x="65" y="81" width="5" height="5" fill="#000"/>
+        <rect x="81" y="81" width="5" height="5" fill="#000"/>
+        <!-- Logo restu en centro -->
+        <rect x="43" y="43" width="14" height="14" rx="2" fill="white"/>
+        <text x="50" y="53" text-anchor="middle" font-size="6" font-weight="bold" fill="#1a6b47" font-family="sans-serif">tp</text>
+      </svg>
+    </div>
+    <div class="qr-label">QR de Al-Waha</div>
+    <div class="qr-sub">Coloca este código en tus mesas, barra y entrada. Tus clientes lo escanean y ven tu carta y perfil.</div>
+    <div class="qr-btns">
+      <button class="qr-btn qr-btn-primary">⬇ Descargar</button>
+      <button class="qr-btn qr-btn-secondary">🖨 Imprimir</button>
+    </div>
+  </div>
+
+  <div class="slabel">Material disponible</div>
+
+  <div class="material-card">
+    <div class="mat-info">
+      <div class="mat-emoji">🪧</div>
+      <div>
+        <div class="mat-name">Tarjetón de mesa</div>
+        <div class="mat-desc">5 unidades · Con logo del restaurante</div>
+      </div>
+    </div>
+    <button class="mat-btn">Pedir</button>
+  </div>
+
+  <div class="material-card">
+    <div class="mat-info">
+      <div class="mat-emoji">⬛</div>
+      <div>
+        <div class="mat-name">Pegatina de puerta</div>
+        <div class="mat-desc">Vinilo resistente · 15×15 cm</div>
+      </div>
+    </div>
+    <button class="mat-btn">Pedir</button>
+  </div>
+
+  <div class="material-card">
+    <div class="mat-info">
+      <div class="mat-emoji">🫗</div>
+      <div>
+        <div class="mat-name">Posavasos QR</div>
+        <div class="mat-desc">50 unidades · Con tu logo</div>
+      </div>
+    </div>
+    <button class="mat-btn">Pedir</button>
+  </div>
+
+  <div class="bottom-space"></div>
+</div>
+
+<!-- ═══ PERFIL ═══ -->
+<div id="screen-perfil" class="screen">
+
+  <div class="slabel">Información de tu restaurante</div>
+
+  <div class="perfil-card">
+    <div class="form-group">
+      <label class="form-label">Nombre del restaurante</label>
+      <input type="text" class="form-input" value="Al-Waha">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Dirección</label>
+      <input type="text" class="form-input" value="Carrer Major, 14 · Salt">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Teléfono / WhatsApp</label>
+      <input type="text" class="form-input" value="+34 972 XXX XXX">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Horario</label>
+      <input type="text" class="form-input" value="Lun–Vie 12:00–23:00 · Sáb–Dom 11:00–23:30">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo de cocina</label>
+      <div class="tag-selector">
+        <span class="tag-opt selected" onclick="toggleTag(this)">Senegalés</span>
+        <span class="tag-opt selected" onclick="toggleTag(this)">Marroquí</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Africano</span>
+        <span class="tag-opt selected" onclick="toggleTag(this)">Halal</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Mediterráneo</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Kebab</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Idiomas de atención</label>
+      <div class="tag-selector">
+        <span class="tag-opt selected" onclick="toggleTag(this)">Español</span>
+        <span class="tag-opt selected" onclick="toggleTag(this)">Français</span>
+        <span class="tag-opt selected" onclick="toggleTag(this)">العربية</span>
+        <span class="tag-opt selected" onclick="toggleTag(this)">Wolof</span>
+      </div>
+    </div>
+    <button class="save-btn">Guardar cambios</button>
+  </div>
+
+  <div class="bottom-space"></div>
+</div>
+
+<script>
+function showScreen(name, tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  if (tab) tab.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleBtn(btn) {
+  btn.classList.toggle('off');
+}
+
+function toggleTag(el) {
+  el.classList.toggle('selected');
+}
+</script>
+</body>
+</html>
