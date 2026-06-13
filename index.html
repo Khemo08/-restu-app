@@ -713,16 +713,16 @@
     </div>
   </div>
   <div class="hero-info">
-    <div class="resto-name">Al-Waha</div>
+    <div class="resto-name" id="resto-name">Cargando...</div>
     <div class="resto-meta">
       <span class="open-badge">Abierto</span>
-      <span class="meta-chip">
+      <span class="meta-chip" id="resto-direccion-chip">
         <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Carrer Major, 14 · Salt
+        <span id="resto-direccion">—</span>
       </span>
       <span class="meta-chip">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Cierra 23:00
+        <span id="resto-horario">—</span>
       </span>
     </div>
   </div>
@@ -771,11 +771,8 @@
   </div>
 
   <!-- Tags -->
-  <div class="tags-row">
+  <div class="tags-row" id="tags-cocina">
     <span class="tag">🥩 Halal</span>
-    <span class="tag">🌍 Senegalés</span>
-    <span class="tag">🫖 Marroquí</span>
-    <span class="tag">🌾 Sin gluten</span>
   </div>
 
   <!-- Idioma -->
@@ -937,7 +934,7 @@
       </div>
       <div>
         <div class="info-label">Dirección</div>
-        <div class="info-value">Carrer Major, 14 · Salt, Girona</div>
+        <div class="info-value" id="info-direccion">Carrer Major, 14 · Salt, Girona</div>
       </div>
     </div>
     <div class="info-row">
@@ -946,8 +943,7 @@
       </div>
       <div>
         <div class="info-label">Horario</div>
-        <div class="info-value">Lun–Vie: 12:00–23:00</div>
-        <div class="info-value">Sáb–Dom: 11:00–23:30</div>
+        <div class="info-value" id="info-horario">Lun–Vie: 12:00–23:00</div>
       </div>
     </div>
     <div class="info-row">
@@ -956,7 +952,7 @@
       </div>
       <div>
         <div class="info-label">Teléfono</div>
-        <div class="info-value">+34 972 XXX XXX</div>
+        <div class="info-value" id="info-telefono">+34 972 XXX XXX</div>
       </div>
     </div>
     <div class="info-row">
@@ -965,7 +961,7 @@
       </div>
       <div>
         <div class="info-label">Idiomas</div>
-        <div class="info-value">Español · Français · العربية · Wolof</div>
+        <div class="info-value" id="info-idiomas">Español · Français · العربية · Wolof</div>
       </div>
     </div>
   </div>
@@ -1022,9 +1018,89 @@ document.getElementById('tab-resenas').addEventListener('click', function() {
 
 const SUPABASE_URL = 'https://zzmjgsbykygonuwjpkqn.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6bWpnc2J5a3lnb251d2pwa3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMDcxNDgsImV4cCI6MjA5NjY4MzE0OH0.H1rf8qr9I4Y40ZazfnOVp7A5PiGZxMTaSweyBPbI358';
-const RESTAURANTE_ID = '49476c71-c604-4b80-abe0-0a2bd15f3d9f'; // Al-Waha
+let RESTAURANTE_ID = null; // se carga dinámicamente según el slug de la URL
+let RESTAURANTE_DATA = null;
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ============================================
+// CARGAR RESTAURANTE SEGÚN EL SLUG DE LA URL
+// /r/al-waha  ->  slug = "al-waha"
+// ============================================
+
+const ICONOS_COCINA = {
+  marroqui: '🫖 Marroquí',
+  senegales: '🌍 Senegalés',
+  halal: '🥩 Halal',
+  gambia: '🌍 Gambiano',
+  mediterraneo: '🌿 Mediterráneo',
+  espanol: '🥘 Español'
+};
+
+const DIAS_ABREV = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function getSlugFromURL() {
+  // Espera URLs tipo /r/al-waha
+  const partes = window.location.pathname.split('/').filter(Boolean);
+  const idx = partes.indexOf('r');
+  if (idx !== -1 && partes[idx + 1]) return partes[idx + 1];
+  // Fallback para pruebas: ?slug=al-waha
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('slug')) return params.get('slug');
+  return 'al-waha'; // valor por defecto para desarrollo
+}
+
+async function cargarRestaurante() {
+  const slug = getSlugFromURL();
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('restaurantes')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+
+    if (error || !data) {
+      document.getElementById('resto-name').textContent = 'Restaurante no encontrado';
+      document.getElementById('resto-direccion').textContent = 'Verifica el enlace';
+      return;
+    }
+
+    RESTAURANTE_DATA = data;
+    RESTAURANTE_ID = data.id;
+
+    // Título y cabecera
+    document.title = 'Restu · ' + data.nombre;
+    document.getElementById('resto-name').textContent = data.nombre;
+    document.getElementById('resto-direccion').textContent = data.direccion || data.ciudad || '';
+    document.getElementById('resto-horario').textContent = data.horario ? data.horario.split('·')[0].trim() : 'Horario no disponible';
+
+    // Info screen
+    document.getElementById('info-direccion').textContent = (data.direccion || '') + (data.ciudad ? ' · ' + data.ciudad : '');
+    document.getElementById('info-horario').textContent = data.horario || '—';
+    document.getElementById('info-telefono').textContent = data.telefono || '—';
+
+    const nombresIdiomas = { es: 'Español', fr: 'Français', ar: 'العربية', en: 'English', wo: 'Wolof' };
+    if (data.idiomas && data.idiomas.length) {
+      document.getElementById('info-idiomas').textContent = data.idiomas.map(i => nombresIdiomas[i] || i).join(' · ');
+    }
+
+    // Tags de tipo de cocina
+    if (data.tipo_cocina && data.tipo_cocina.length) {
+      const tagsHtml = data.tipo_cocina.map(t => `<span class="tag">${ICONOS_COCINA[t] || t}</span>`).join('');
+      document.getElementById('tags-cocina').innerHTML = tagsHtml;
+    }
+
+    // Ahora que sabemos el RESTAURANTE_ID, cargamos el resto de datos
+    await Promise.all([
+      cargarResenasPublicas(),
+      cargarCarta()
+    ]);
+
+  } catch (err) {
+    console.error('Error cargando restaurante:', err);
+  }
+}
 
 // Palabras clave que disparan una alerta crítica inmediata
 const PALABRAS_CRITICAS = [
@@ -1278,10 +1354,7 @@ async function cargarCarta() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  cargarResenasPublicas();
-  cargarCarta();
-});
+document.addEventListener('DOMContentLoaded', cargarRestaurante);
 
 // Recargar también después de enviar una reseña nueva (con un pequeño delay)
 const enviarResenaOriginal = enviarResena;
