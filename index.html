@@ -693,6 +693,7 @@
   .screen.active > *:nth-child(4) { animation-delay: 0.15s; }
   .screen.active > *:nth-child(5) { animation-delay: 0.2s; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
@@ -1116,7 +1117,7 @@
 
     <div class="form-group">
       <label class="form-label">Tu comentario (opcional)</label>
-      <textarea class="form-textarea" placeholder="¿Qué te pareció? ¿Lo recomendarías?"></textarea>
+      <textarea class="form-textarea" id="resena-texto" placeholder="¿Qué te pareció? ¿Lo recomendarías?"></textarea>
     </div>
 
     <div class="form-group">
@@ -1126,7 +1127,9 @@
       </div>
     </div>
 
-    <button class="btn-submit">Enviar reseña</button>
+    <div id="resena-msg" style="display:none;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:8px;"></div>
+
+    <button class="btn-submit" id="btn-enviar-resena" onclick="enviarResena()">Enviar reseña</button>
   </div>
 
   <div class="bottom-space"></div>
@@ -1220,6 +1223,139 @@ function rate(cat, val) {
 document.getElementById('tab-resenas').addEventListener('click', function() {
   showScreen('resenas', this);
 });
+
+// ============================================
+// RESTU - CONEXIÓN SUPABASE + LÓGICA SBF
+// ============================================
+
+const SUPABASE_URL = 'https://zzmjgsbykygonuwjpkqn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6bWpnc2J5a3lnb251d2pwa3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMDcxNDgsImV4cCI6MjA5NjY4MzE0OH0.H1rf8qr9I4Y40ZazfnOVp7A5PiGZxMTaSweyBPbI358';
+const RESTAURANTE_ID = '49476c71-c604-4b80-abe0-0a2bd15f3d9f'; // Al-Waha
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Palabras clave que disparan una alerta crítica inmediata
+const PALABRAS_CRITICAS = [
+  'vomito', 'vómito', 'vomitos', 'vómitos',
+  'intoxica', 'intoxicación', 'intoxicacion',
+  'discrimina', 'discriminación', 'discriminacion', 'racis',
+  'sucio', 'sucia', 'suciedad', 'cucaracha', 'rata', 'pelo',
+  'asco', 'asqueroso', 'enfermo', 'enferma'
+];
+
+function detectarAlertaCritica(texto) {
+  if (!texto) return false;
+  const t = texto.toLowerCase();
+  return PALABRAS_CRITICAS.some(palabra => t.includes(palabra));
+}
+
+function detectarCategoriaQueja(ratings) {
+  // Devuelve la categoría con peor nota (para reseñas privadas)
+  const categorias = ['comida', 'personal', 'limpieza', 'servicio'];
+  let peor = null;
+  let peorValor = 6;
+  categorias.forEach(cat => {
+    const val = ratings[cat];
+    if (val !== undefined && val < peorValor) {
+      peorValor = val;
+      peor = cat;
+    }
+  });
+  return peor;
+}
+
+function mostrarMensaje(texto, tipo) {
+  const msg = document.getElementById('resena-msg');
+  msg.style.display = 'block';
+  msg.textContent = texto;
+  if (tipo === 'publica') {
+    msg.style.background = 'var(--green-pale)';
+    msg.style.color = 'var(--green)';
+    msg.style.border = '1px solid rgba(26,107,71,0.2)';
+  } else if (tipo === 'privada') {
+    msg.style.background = '#fff8e1';
+    msg.style.color = '#8a6d00';
+    msg.style.border = '1px solid rgba(200,151,58,0.3)';
+  } else {
+    msg.style.background = '#fdecea';
+    msg.style.color = '#b3261e';
+    msg.style.border = '1px solid rgba(179,38,30,0.2)';
+  }
+}
+
+async function enviarResena() {
+  const btn = document.getElementById('btn-enviar-resena');
+
+  // Validar que al menos comida y servicio estén valorados
+  if (ratings.comida === undefined || ratings.servicio === undefined) {
+    mostrarMensaje('Por favor valora al menos Comida y Tiempo de servicio antes de enviar.', 'error');
+    return;
+  }
+
+  const texto = document.getElementById('resena-texto').value.trim();
+
+  // Calcular media global (solo de las categorías valoradas)
+  const valores = Object.values(ratings);
+  const valGlobal = valores.reduce((a, b) => a + b, 0) / valores.length;
+
+  // LÓGICA SBF: pública si la media es >= 4, privada si es menor
+  const esPublica = valGlobal >= 4;
+
+  // Detección de alerta crítica por palabras clave
+  const alertaCritica = detectarAlertaCritica(texto);
+
+  // Si no es pública, identificamos qué categoría falló más
+  const categoriaQueja = !esPublica ? detectarCategoriaQueja(ratings) : null;
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('resenas')
+      .insert({
+        restaurante_id: RESTAURANTE_ID,
+        val_comida: ratings.comida ?? null,
+        val_personal: ratings.personal ?? null,
+        val_limpieza: ratings.limpieza ?? null,
+        val_servicio: ratings.servicio ?? null,
+        val_global: Math.round(valGlobal * 10) / 10,
+        texto: texto || null,
+        es_publica: esPublica,
+        alerta_critica: alertaCritica,
+        categoria_queja: categoriaQueja
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Si hay alerta crítica, la registramos en la tabla de alertas
+    if (alertaCritica) {
+      await supabaseClient.from('alertas').insert({
+        restaurante_id: RESTAURANTE_ID,
+        resena_id: data.id,
+        tipo: 'detectada_por_palabra_clave',
+        texto_original: texto
+      });
+    }
+
+    // Feedback al cliente según el flujo SBF
+    if (esPublica) {
+      mostrarMensaje('¡Gracias! Tu reseña se ha publicado en el Muro de Recomendaciones. Has ganado 20 puntos 🎉', 'publica');
+    } else {
+      mostrarMensaje('Gracias por tu sinceridad. Hemos enviado tu comentario directamente al gerente para mejorar. Has ganado 20 puntos 🙏', 'privada');
+    }
+
+    btn.textContent = '✓ Reseña enviada';
+
+  } catch (err) {
+    console.error(err);
+    mostrarMensaje('Hubo un problema al enviar tu reseña. Inténtalo de nuevo.', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Enviar reseña';
+  }
+}
 </script>
 </body>
 </html>
