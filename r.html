@@ -704,11 +704,9 @@
   <div class="hero-top">
     <div class="restu-logo">res<span>tu</span></div>
     <div class="hero-actions">
+      <button class="hero-btn" id="pasaporte-badge" onclick="mostrarModalRegistro()" title="Mis puntos" style="font-size:11px;font-weight:700;padding:0 10px;min-width:64px;">🎁 Puntos</button>
       <button class="hero-btn" title="Compartir">
         <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      </button>
-      <button class="hero-btn" title="Guardar favorito">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
     </div>
   </div>
@@ -917,6 +915,11 @@
     </div>
 
     <div id="resena-msg" style="display:none;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:8px;"></div>
+
+    <!-- Banner pasaporte -->
+    <div id="pasaporte-info" style="font-size:12px;color:#1a6b47;background:#e8f5ee;border-radius:10px;padding:10px 12px;margin-bottom:12px;text-align:center;">
+      Regístrate y gana puntos por cada reseña
+    </div>
 
     <button class="btn-submit" id="btn-enviar-resena" onclick="enviarResena()">Enviar reseña</button>
   </div>
@@ -1448,6 +1451,13 @@ async function enviarResena() {
 
     btn.textContent = '✓ Reseña enviada';
 
+    // Sumar puntos si hay usuario registrado, o mostrar modal
+    if (usuarioActual) {
+      await sumarPuntosReseña();
+    } else {
+      setTimeout(mostrarModalRegistro, 1500);
+    }
+
   } catch (err) {
     console.error(err);
     mostrarMensaje('Hubo un problema al enviar tu reseña. Inténtalo de nuevo.', 'error');
@@ -1455,6 +1465,183 @@ async function enviarResena() {
     btn.textContent = 'Enviar reseña';
   }
 }
+
+// ============================================
+// PASAPORTE DE FIDELIDAD
+// ============================================
+
+// Premio: 200 puntos = 1 té gratis
+const PUNTOS_RESEÑA = 20;
+const PUNTOS_REGISTRO = 50;
+const PUNTOS_PREMIO = 200;
+
+let usuarioActual = null; // { id, nombre, email, puntos }
+
+// Modal de registro simple (sin Google OAuth completo por ahora)
+// Usamos un registro por email/teléfono ligero
+function mostrarModalRegistro() {
+  const modal = document.getElementById('modal-registro');
+  if (modal) modal.style.display = 'flex';
+}
+
+function cerrarModalRegistro() {
+  const modal = document.getElementById('modal-registro');
+  if (modal) modal.style.display = 'none';
+}
+
+async function registrarUsuario() {
+  const nombre = document.getElementById('reg-nombre').value.trim();
+  const telefono = document.getElementById('reg-telefono').value.trim();
+
+  if (!nombre || !telefono) {
+    alert('Por favor rellena tu nombre y teléfono');
+    return;
+  }
+
+  const btn = document.getElementById('btn-registrar');
+  btn.disabled = true;
+  btn.textContent = 'Registrando...';
+
+  try {
+    // Verificar si ya existe
+    const { data: existe } = await supabaseClient
+      .from('usuarios')
+      .select('*')
+      .eq('telefono', telefono)
+      .single();
+
+    if (existe) {
+      usuarioActual = existe;
+    } else {
+      // Crear usuario nuevo con puntos de bienvenida
+      const { data: nuevo, error } = await supabaseClient
+        .from('usuarios')
+        .insert({
+          nombre: nombre,
+          telefono: telefono,
+          puntos: PUNTOS_REGISTRO
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      usuarioActual = nuevo;
+
+      // Registrar los puntos de bienvenida en historial
+      await supabaseClient.from('puntos_historial').insert({
+        usuario_id: nuevo.id,
+        restaurante_id: RESTAURANTE_ID,
+        puntos: PUNTOS_REGISTRO,
+        motivo: 'registro'
+      });
+    }
+
+    cerrarModalRegistro();
+    actualizarPasaporte();
+
+    // Guardar en localStorage para próximas visitas
+    localStorage.setItem('restu_usuario_id', usuarioActual.id);
+    localStorage.setItem('restu_usuario_nombre', usuarioActual.nombre);
+
+  } catch (err) {
+    console.error('Error registrando:', err);
+    alert('Error al registrarse. Inténtalo de nuevo.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar y activar puntos';
+  }
+}
+
+async function cargarUsuarioGuardado() {
+  const id = localStorage.getItem('restu_usuario_id');
+  if (!id) return;
+
+  const { data } = await supabaseClient
+    .from('usuarios')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (data) {
+    usuarioActual = data;
+    actualizarPasaporte();
+  }
+}
+
+function actualizarPasaporte() {
+  const badge = document.getElementById('pasaporte-badge');
+  const info = document.getElementById('pasaporte-info');
+  if (!badge || !info) return;
+
+  if (usuarioActual) {
+    const puntos = usuarioActual.puntos || 0;
+    const faltan = Math.max(0, PUNTOS_PREMIO - puntos);
+    badge.textContent = `🎁 ${puntos} pts`;
+    badge.style.background = 'var(--green-pale)';
+    badge.style.color = 'var(--green)';
+    info.textContent = faltan > 0
+      ? `Te faltan ${faltan} puntos para tu té gratis`
+      : '¡Tienes un premio listo para canjear!';
+  } else {
+    badge.textContent = '🎁 Puntos';
+    info.textContent = 'Regístrate y gana puntos por cada reseña';
+  }
+}
+
+async function sumarPuntosReseña() {
+  if (!usuarioActual || !RESTAURANTE_ID) return;
+
+  try {
+    // Sumar puntos al usuario
+    const nuevosPuntos = (usuarioActual.puntos || 0) + PUNTOS_RESEÑA;
+    await supabaseClient
+      .from('usuarios')
+      .update({ puntos: nuevosPuntos })
+      .eq('id', usuarioActual.id);
+
+    // Registrar en historial
+    await supabaseClient.from('puntos_historial').insert({
+      usuario_id: usuarioActual.id,
+      restaurante_id: RESTAURANTE_ID,
+      puntos: PUNTOS_RESEÑA,
+      motivo: 'reseña'
+    });
+
+    usuarioActual.puntos = nuevosPuntos;
+    actualizarPasaporte();
+
+  } catch (err) {
+    console.error('Error sumando puntos:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', cargarUsuarioGuardado);
 </script>
+
+<!-- MODAL DE REGISTRO -->
+<div id="modal-registro" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:flex-end;justify-content:center;">
+  <div style="background:#fff;border-radius:20px 20px 0 0;padding:28px 20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;">
+    <div style="font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">🎁 Activa tu pasaporte</div>
+    <div style="font-size:13px;color:#6b6b66;margin-bottom:20px;">Gana 50 puntos de bienvenida + 20 puntos por cada reseña. Con 200 puntos, un té gratis.</div>
+
+    <div style="margin-bottom:12px;">
+      <label style="font-size:12px;font-weight:600;color:#1a1a1a;display:block;margin-bottom:6px;">Tu nombre</label>
+      <input id="reg-nombre" type="text" placeholder="¿Cómo te llamas?" style="width:100%;padding:12px 14px;border:1.5px solid #ece8de;border-radius:10px;font-size:14px;outline:none;">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="font-size:12px;font-weight:600;color:#1a1a1a;display:block;margin-bottom:6px;">Tu teléfono (WhatsApp)</label>
+      <input id="reg-telefono" type="tel" placeholder="+34 6XX XXX XXX" style="width:100%;padding:12px 14px;border:1.5px solid #ece8de;border-radius:10px;font-size:14px;outline:none;">
+    </div>
+
+    <button id="btn-registrar" onclick="registrarUsuario()" style="width:100%;background:#1a6b47;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;">
+      Guardar y activar puntos
+    </button>
+    <button onclick="cerrarModalRegistro()" style="width:100%;background:transparent;color:#6b6b66;border:none;padding:10px;font-size:13px;cursor:pointer;">
+      Ahora no
+    </button>
+  </div>
+</div>
+
 </body>
 </html>
