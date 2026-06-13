@@ -792,57 +792,8 @@
     <div class="section-link" onclick="showScreen('carta', document.getElementById('tab-carta'))">Ver carta →</div>
   </div>
 
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#fff8e1;">🍗</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Pollo Yassa</div>
-        <div class="plato-price">9,50€</div>
-      </div>
-      <div class="plato-desc">Pollo marinado con cebolla caramelizada y limón. Servido con arroz blanco.</div>
-      <div class="plato-footer">
-        <span class="badge badge-hot">⭐ Favorito</span>
-        <span class="votes">
-          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          31 recomendaciones
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#e3f2fd;">🐟</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Thiéboudiène</div>
-        <div class="plato-price">11,00€</div>
-      </div>
-      <div class="plato-desc">Plato nacional senegalés. Arroz con pescado, verduras y salsa de tomate casera.</div>
-      <div class="plato-footer">
-        <span class="votes">
-          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          24 recomendaciones
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#e8f5e9;">🥙</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Kebab Mixto</div>
-        <div class="plato-price">7,50€</div>
-      </div>
-      <div class="plato-desc">Pollo y ternera con salsa de yogur, verduras frescas y pan de pita artesano.</div>
-      <div class="plato-footer">
-        <span class="badge badge-new">Nuevo</span>
-        <span class="votes">
-          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          19 recomendaciones
-        </span>
-      </div>
-    </div>
+  <div id="platos-estrella-container">
+    <div class="resena-card"><div class="resena-text" style="color:var(--mid);">Cargando carta...</div></div>
   </div>
 
   <!-- Última reseña -->
@@ -863,114 +814,8 @@
 <!-- SCREEN: CARTA -->
 <div id="screen-carta" class="screen">
 
-  <div class="section-header" style="padding-top:16px;">
-    <div class="section-title">Entrantes</div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#fce4ec;">🥗</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Ensalada Marroquí</div>
-        <div class="plato-price">4,50€</div>
-      </div>
-      <div class="plato-desc">Tomate, pepino, aceitunas, comino y menta fresca con aceite de oliva virgen.</div>
-    </div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#f3e5f5;">🫓</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Hummus con Pan</div>
-        <div class="plato-price">5,00€</div>
-      </div>
-      <div class="plato-desc">Hummus casero con aceite de oliva y pimentón. Pan de pita recién horneado.</div>
-    </div>
-  </div>
-
-  <div class="section-header" style="margin-top:8px;">
-    <div class="section-title">Platos principales</div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#fff8e1;">🍗</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Pollo Yassa</div>
-        <div class="plato-price">9,50€</div>
-      </div>
-      <div class="plato-desc">Pollo marinado con cebolla caramelizada y limón. Servido con arroz blanco.</div>
-      <div class="plato-footer">
-        <span class="badge badge-hot">⭐ Favorito</span>
-        <span class="votes"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>31</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#e3f2fd;">🐟</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Thiéboudiène</div>
-        <div class="plato-price">11,00€</div>
-      </div>
-      <div class="plato-desc">Plato nacional senegalés. Arroz con pescado, verduras y salsa de tomate casera.</div>
-      <div class="plato-footer">
-        <span class="votes"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>24</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#e8f5e9;">🥙</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Kebab Mixto</div>
-        <div class="plato-price">7,50€</div>
-      </div>
-      <div class="plato-desc">Pollo y ternera con salsa de yogur, verduras frescas y pan de pita artesano.</div>
-      <div class="plato-footer">
-        <span class="badge badge-new">Nuevo</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#fff3e0;">🥜</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Sopa de Maní</div>
-        <div class="plato-price">8,50€</div>
-      </div>
-      <div class="plato-desc">Sopa tradicional de cacahuete con pollo, verduras y especias de África occidental.</div>
-    </div>
-  </div>
-
-  <div class="section-header" style="margin-top:8px;">
-    <div class="section-title">Postres y bebidas</div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#fce4ec;">🍮</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Thiakry</div>
-        <div class="plato-price">3,50€</div>
-      </div>
-      <div class="plato-desc">Postre senegalés de mijo con yogur, coco y especias dulces.</div>
-    </div>
-  </div>
-
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:#f3e5f5;">🍵</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">Té Moruno</div>
-        <div class="plato-price">2,50€</div>
-      </div>
-      <div class="plato-desc">Té verde con hierbabuena fresca. Servido en vaso tradicional.</div>
-    </div>
+  <div id="carta-container">
+    <div class="resena-card" style="margin-top:16px;"><div class="resena-text" style="color:var(--mid);">Cargando carta...</div></div>
   </div>
 
   <div class="bottom-space"></div>
@@ -1346,8 +1191,97 @@ async function cargarResenasPublicas() {
   }
 }
 
-// Cargar reseñas reales en cuanto la página esté lista
-document.addEventListener('DOMContentLoaded', cargarResenasPublicas);
+// ============================================
+// CARGAR CARTA REAL DESDE SUPABASE
+// ============================================
+
+const COLORES_CATEGORIA = {
+  entrante: '#fce4ec',
+  principal: '#fff8e1',
+  postre: '#f3e5f5',
+  bebida: '#e3f2fd'
+};
+
+const NOMBRES_CATEGORIA = {
+  entrante: 'Entrantes',
+  principal: 'Platos principales',
+  postre: 'Postres',
+  bebida: 'Bebidas'
+};
+
+function renderPlatoCard(p, conFooter) {
+  const bg = COLORES_CATEGORIA[p.categoria] || '#f5f5f5';
+  let footer = '';
+  if (conFooter && p.etiqueta) {
+    const badgeClass = p.etiqueta === 'Nuevo' ? 'badge-new' : 'badge-hot';
+    const badgeIcon = p.etiqueta === 'Favorito' ? '⭐ ' : '';
+    footer = `<div class="plato-footer"><span class="badge ${badgeClass}">${badgeIcon}${p.etiqueta}</span></div>`;
+  }
+
+  let alergenos = '';
+  if (p.alergenos && p.alergenos.length > 0) {
+    alergenos = `<div style="font-size:11px;color:var(--mid);margin-top:4px;">⚠️ Contiene: ${p.alergenos.join(', ')}</div>`;
+  }
+  if (p.vegetariano) {
+    alergenos += `<div style="font-size:11px;color:var(--green);margin-top:2px;">🌿 Vegetariano</div>`;
+  }
+
+  return `
+  <div class="plato-card">
+    <div class="plato-emoji" style="background:${bg};">${p.emoji || '🍽️'}</div>
+    <div class="plato-body">
+      <div class="plato-top">
+        <div class="plato-name">${p.nombre}</div>
+        <div class="plato-price">${Number(p.precio).toFixed(2).replace('.', ',')}€</div>
+      </div>
+      <div class="plato-desc">${p.descripcion || ''}</div>
+      ${alergenos}
+      ${footer}
+    </div>
+  </div>`;
+}
+
+async function cargarCarta() {
+  try {
+    const { data: platos, error } = await supabaseClient
+      .from('platos')
+      .select('*')
+      .eq('restaurante_id', RESTAURANTE_ID)
+      .eq('activo', true)
+      .order('orden', { ascending: true });
+
+    if (error) throw error;
+
+    // --- Platos estrella (pantalla inicio) ---
+    const destacados = platos.filter(p => p.destacado);
+    const estrellaContainer = document.getElementById('platos-estrella-container');
+    if (destacados.length > 0) {
+      estrellaContainer.innerHTML = destacados.map(p => renderPlatoCard(p, true)).join('');
+    } else {
+      estrellaContainer.innerHTML = '';
+    }
+
+    // --- Carta completa agrupada por categoría ---
+    const cartaContainer = document.getElementById('carta-container');
+    const categorias = ['entrante', 'principal', 'postre', 'bebida'];
+    let html = '';
+    categorias.forEach(cat => {
+      const platosCat = platos.filter(p => p.categoria === cat);
+      if (platosCat.length === 0) return;
+      html += `<div class="section-header" style="padding-top:16px;"><div class="section-title">${NOMBRES_CATEGORIA[cat]}</div></div>`;
+      html += platosCat.map(p => renderPlatoCard(p, true)).join('');
+    });
+    cartaContainer.innerHTML = html || '<div class="resena-card"><div class="resena-text" style="color:var(--mid);">La carta se está preparando.</div></div>';
+
+  } catch (err) {
+    console.error('Error cargando carta:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  cargarResenasPublicas();
+  cargarCarta();
+});
 
 // Recargar también después de enviar una reseña nueva (con un pequeño delay)
 const enviarResenaOriginal = enviarResena;
