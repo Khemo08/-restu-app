@@ -627,6 +627,7 @@ body {
 .screen.active > *:nth-child(5) { animation-delay: 0.16s; }
 .screen.active > *:nth-child(6) { animation-delay: 0.2s; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
@@ -660,56 +661,76 @@ body {
     <div class="plan-price">129€/mes</div>
   </div>
 
-  <div class="slabel">Este mes · Mayo 2025</div>
+  <div class="slabel">Este mes · Junio 2026</div>
   <div class="metrics">
     <div class="metric">
-      <div class="metric-label">Visitas al perfil</div>
-      <div class="metric-val">1.240</div>
-      <div class="metric-delta up">↑ +18% vs abril</div>
+      <div class="metric-label">Reseñas totales</div>
+      <div class="metric-val" id="m-total">–</div>
+      <div class="metric-delta neutral" id="m-total-delta">Datos en vivo</div>
     </div>
     <div class="metric">
-      <div class="metric-label">Reseñas nuevas</div>
-      <div class="metric-val">23</div>
-      <div class="metric-delta up">↑ +5 este mes</div>
+      <div class="metric-label">Públicas</div>
+      <div class="metric-val" id="m-publicas">–</div>
+      <div class="metric-delta up">Muro de recomendaciones</div>
     </div>
     <div class="metric">
       <div class="metric-label">Valoración media</div>
-      <div class="metric-val">4.2</div>
-      <div class="metric-delta neutral">→ Sin cambio</div>
+      <div class="metric-val" id="m-media">–</div>
+      <div class="metric-delta neutral" id="m-media-delta">→ En base a datos reales</div>
     </div>
     <div class="metric">
-      <div class="metric-label">Tiempo servicio</div>
-      <div class="metric-val">18m</div>
-      <div class="metric-delta down">↑ +3 min vs abril</div>
+      <div class="metric-label">Alertas activas</div>
+      <div class="metric-val" id="m-alertas">–</div>
+      <div class="metric-delta down" id="m-alertas-delta">Revisar buzón privado</div>
     </div>
+  </div>
+
+  <!-- SEMÁFORO DE REPUTACIÓN -->
+  <div class="ai-box" id="semaforo-box" style="border-color:var(--border);">
+    <div class="ai-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/></svg>
+      Semáforo de reputación
+    </div>
+    <div id="semaforo-contenido" style="font-size:13px;color:var(--text2);line-height:1.6;">
+      Cargando...
+    </div>
+  </div>
+
+  <!-- ALERTAS CRÍTICAS -->
+  <div class="ai-box" id="alertas-box" style="display:none;border-color:var(--red);">
+    <div class="ai-title" style="color:var(--red);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      ⚠️ Alertas críticas — actúa ahora
+    </div>
+    <div id="alertas-contenido"></div>
   </div>
 
   <div class="rating-summary">
     <div class="rating-big">
-      <div class="rating-num">4.2</div>
-      <div class="stars">★★★★☆</div>
-      <div class="rating-total">87 reseñas</div>
+      <div class="rating-num" id="r-media">–</div>
+      <div class="stars" id="r-stars">★★★★★</div>
+      <div class="rating-total" id="r-total">0 reseñas</div>
     </div>
     <div class="cat-bars">
       <div class="cat-row">
         <div class="cat-label">Comida</div>
-        <div class="bar-track"><div class="bar-fill bar-green" style="width:88%"></div></div>
-        <div class="cat-val">4.4</div>
+        <div class="bar-track"><div class="bar-fill bar-green" id="r-bar-comida" style="width:0%"></div></div>
+        <div class="cat-val" id="r-val-comida">–</div>
       </div>
       <div class="cat-row">
         <div class="cat-label">Personal</div>
-        <div class="bar-track"><div class="bar-fill bar-green" style="width:84%"></div></div>
-        <div class="cat-val">4.2</div>
+        <div class="bar-track"><div class="bar-fill bar-green" id="r-bar-personal" style="width:0%"></div></div>
+        <div class="cat-val" id="r-val-personal">–</div>
       </div>
       <div class="cat-row">
         <div class="cat-label">Limpieza</div>
-        <div class="bar-track"><div class="bar-fill bar-gold" style="width:80%"></div></div>
-        <div class="cat-val">4.0</div>
+        <div class="bar-track"><div class="bar-fill bar-gold" id="r-bar-limpieza" style="width:0%"></div></div>
+        <div class="cat-val" id="r-val-limpieza">–</div>
       </div>
       <div class="cat-row">
         <div class="cat-label">Servicio</div>
-        <div class="bar-track"><div class="bar-fill bar-red" style="width:60%"></div></div>
-        <div class="cat-val" style="color:var(--red)">3.0</div>
+        <div class="bar-track"><div class="bar-fill bar-red" id="r-bar-servicio" style="width:0%"></div></div>
+        <div class="cat-val" id="r-val-servicio">–</div>
       </div>
     </div>
   </div>
@@ -743,57 +764,12 @@ body {
 <!-- ═══ RESEÑAS ═══ -->
 <div id="screen-resenas" class="screen">
 
-  <div class="slabel">Últimas reseñas — responde para mejorar tu nota</div>
+  <div class="slabel">Todas las reseñas — públicas y buzón privado</div>
 
-  <div class="resena-card">
-    <div class="resena-header">
-      <div class="avatar" style="background:rgba(62,207,120,0.15);color:var(--green);">AM</div>
-      <div class="resena-meta">
-        <div class="resena-name">Amina M. <span class="resena-stars">★★★★★</span></div>
-        <div class="resena-date">hace 2 días · Pollo Yassa</div>
-      </div>
+  <div id="panel-resenas-container">
+    <div class="resena-card">
+      <div class="resena-text" style="color:var(--text2);">Cargando reseñas...</div>
     </div>
-    <div class="resena-text">"El yassa estaba increíble, como en casa. El personal muy amable y la ración enorme."</div>
-    <div class="resena-cats">
-      <span class="rcat">Comida <strong>5.0</strong></span>
-      <span class="rcat">Personal <strong>5.0</strong></span>
-      <span class="rcat">Servicio <strong>3.0</strong></span>
-    </div>
-    <button class="responder-btn">✉️ Responder a Amina</button>
-  </div>
-
-  <div class="resena-card">
-    <div class="resena-header">
-      <div class="avatar" style="background:rgba(96,165,250,0.15);color:var(--blue);">JL</div>
-      <div class="resena-meta">
-        <div class="resena-name">Josep L. <span class="resena-stars">★★★★☆</span></div>
-        <div class="resena-date">hace 5 días · Kebab Mixto</div>
-      </div>
-    </div>
-    <div class="resena-text">"Muy buena comida y precio justo. Tardaron un poco pero mereció la espera totalmente."</div>
-    <div class="resena-cats">
-      <span class="rcat">Comida <strong>4.5</strong></span>
-      <span class="rcat">Limpieza <strong>4.0</strong></span>
-      <span class="rcat">Servicio <strong>3.5</strong></span>
-    </div>
-    <button class="responder-btn">✉️ Responder a Josep</button>
-  </div>
-
-  <div class="resena-card">
-    <div class="resena-header">
-      <div class="avatar" style="background:rgba(240,180,41,0.15);color:var(--gold);">FD</div>
-      <div class="resena-meta">
-        <div class="resena-name">Fatou D. <span class="resena-stars">★★★★★</span></div>
-        <div class="resena-date">hace 1 semana · Thiéboudiène</div>
-      </div>
-    </div>
-    <div class="resena-text">"Le thiéboudiène est excellent ! Ça me rappelle la cuisine de ma maman à Dakar."</div>
-    <div class="resena-cats">
-      <span class="rcat">Comida <strong>5.0</strong></span>
-      <span class="rcat">Personal <strong>4.5</strong></span>
-      <span class="rcat">Servicio <strong>4.0</strong></span>
-    </div>
-    <button class="responder-btn">✉️ Responder a Fatou</button>
   </div>
 
   <div class="bottom-space"></div>
@@ -1034,6 +1010,190 @@ function toggleBtn(btn) {
 function toggleTag(el) {
   el.classList.toggle('selected');
 }
+
+// ============================================
+// RESTU - PANEL DEL DUEÑO · CONEXIÓN SUPABASE
+// ============================================
+
+const SUPABASE_URL = 'https://zzmjgsbykygonuwjpkqn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6bWpnc2J5a3lnb251d2pwa3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMDcxNDgsImV4cCI6MjA5NjY4MzE0OH0.H1rf8qr9I4Y40ZazfnOVp7A5PiGZxMTaSweyBPbI358';
+const RESTAURANTE_ID = '49476c71-c604-4b80-abe0-0a2bd15f3d9f'; // Al-Waha
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Umbrales de la Regla de Reincidencia (ciclo 30 días)
+const UMBRALES = { comida: 3, servicio: 5, limpieza: 2, personal: 3 };
+
+function tiempoRelativo(fechaStr) {
+  const fecha = new Date(fechaStr);
+  const ahora = new Date();
+  const diffMs = ahora - fecha;
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHoras = Math.floor(diffMin / 60);
+  const diffDias = Math.floor(diffHoras / 24);
+  if (diffMin < 1) return 'justo ahora';
+  if (diffMin < 60) return `hace ${diffMin} min`;
+  if (diffHoras < 24) return `hace ${diffHoras}h`;
+  if (diffDias === 1) return 'hace 1 día';
+  if (diffDias < 7) return `hace ${diffDias} días`;
+  const semanas = Math.floor(diffDias / 7);
+  if (semanas === 1) return 'hace 1 semana';
+  return `hace ${semanas} semanas`;
+}
+
+function estrellasTexto(valor) {
+  const redondeado = Math.round(valor);
+  return '★'.repeat(redondeado) + '☆'.repeat(5 - redondeado);
+}
+
+function renderResenaCardPanel(r) {
+  const fecha = tiempoRelativo(r.fecha);
+  const stars = estrellasTexto(r.val_global);
+  const esPublica = r.es_publica;
+
+  let chips = '';
+  if (r.val_comida) chips += `<span class="rcat">Comida <strong>${Number(r.val_comida).toFixed(1)}</strong></span>`;
+  if (r.val_personal) chips += `<span class="rcat">Personal <strong>${Number(r.val_personal).toFixed(1)}</strong></span>`;
+  if (r.val_limpieza) chips += `<span class="rcat">Limpieza <strong>${Number(r.val_limpieza).toFixed(1)}</strong></span>`;
+  if (r.val_servicio) chips += `<span class="rcat">Servicio <strong>${Number(r.val_servicio).toFixed(1)}</strong></span>`;
+
+  const texto = r.texto ? `"${r.texto}"` : '<span style="color:var(--text3);font-style:italic;">Sin comentario escrito.</span>';
+
+  const badge = esPublica
+    ? `<span style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-pale);padding:3px 8px;border-radius:6px;letter-spacing:0.5px;">🌍 PÚBLICA</span>`
+    : `<span style="font-size:10px;font-weight:700;color:var(--gold);background:var(--gold-pale);padding:3px 8px;border-radius:6px;letter-spacing:0.5px;">🔒 BUZÓN PRIVADO${r.categoria_queja ? ' · ' + r.categoria_queja.toUpperCase() : ''}</span>`;
+
+  const borderColor = r.alerta_critica ? 'var(--red)' : 'var(--border)';
+  const alertaTag = r.alerta_critica ? `<div style="margin-top:8px;font-size:11px;font-weight:700;color:var(--red);">⚠️ ALERTA CRÍTICA DETECTADA</div>` : '';
+
+  return `
+  <div class="resena-card" style="border-color:${borderColor};">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      ${badge}
+      <span class="resena-date" style="margin:0;">${fecha} · <span class="resena-stars">${stars}</span></span>
+    </div>
+    <div class="resena-text">${texto}</div>
+    <div class="resena-cats">${chips}</div>
+    ${alertaTag}
+  </div>`;
+}
+
+async function cargarPanelDueno() {
+  try {
+    const { data: resenas, error } = await supabaseClient
+      .from('resenas')
+      .select('*')
+      .eq('restaurante_id', RESTAURANTE_ID)
+      .order('fecha', { ascending: false });
+
+    if (error) throw error;
+
+    const total = resenas.length;
+
+    // --- Lista de reseñas (públicas + privadas) ---
+    const container = document.getElementById('panel-resenas-container');
+    if (total > 0) {
+      container.innerHTML = resenas.map(renderResenaCardPanel).join('');
+    } else {
+      container.innerHTML = `<div class="resena-card"><div class="resena-text" style="color:var(--text2);">Todavía no han llegado reseñas. En cuanto un cliente escanee el QR y valore, aparecerán aquí en tiempo real.</div></div>`;
+    }
+
+    // --- Métricas y rating ---
+    const publicas = resenas.filter(r => r.es_publica);
+    document.getElementById('m-total').textContent = total;
+    document.getElementById('m-publicas').textContent = publicas.length;
+
+    const media = arr => arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length) : 0;
+    const valoresGlobal = resenas.filter(r => r.val_global).map(r => Number(r.val_global));
+    const mGlobal = media(valoresGlobal);
+
+    document.getElementById('m-media').textContent = total ? mGlobal.toFixed(1) : '–';
+    document.getElementById('r-media').textContent = total ? mGlobal.toFixed(1) : '–';
+    document.getElementById('r-stars').textContent = total ? estrellasTexto(mGlobal) : '☆☆☆☆☆';
+    document.getElementById('r-total').textContent = `${total} reseña${total===1?'':'s'}`;
+
+    const porCategoria = cat => media(resenas.filter(r => r[cat]).map(r => Number(r[cat])));
+    const cats = { comida: 'r', personal: 'r', limpieza: 'r', servicio: 'r' };
+    ['comida','personal','limpieza','servicio'].forEach(cat => {
+      const m = porCategoria('val_' + cat);
+      const valEl = document.getElementById('r-val-' + cat);
+      const barEl = document.getElementById('r-bar-' + cat);
+      if (valEl) valEl.textContent = total ? m.toFixed(1) : '–';
+      if (barEl) barEl.style.width = (m/5*100) + '%';
+    });
+
+    // --- SEMÁFORO DE REPUTACIÓN (Regla de Reincidencia) ---
+    const ahora = new Date();
+    const hace30dias = new Date(ahora.getTime() - 30*24*60*60*1000);
+    const privadasRecientes = resenas.filter(r => !r.es_publica && new Date(r.fecha) >= hace30dias);
+
+    const conteoQuejas = { comida: 0, servicio: 0, limpieza: 0, personal: 0 };
+    privadasRecientes.forEach(r => {
+      if (r.categoria_queja && conteoQuejas[r.categoria_queja] !== undefined) {
+        conteoQuejas[r.categoria_queja]++;
+      }
+    });
+
+    let estado = 'verde';
+    let detalles = [];
+    Object.keys(UMBRALES).forEach(cat => {
+      const n = conteoQuejas[cat];
+      const umbral = UMBRALES[cat];
+      if (n >= umbral) {
+        estado = 'rojo';
+        detalles.push(`🔴 <strong>${cat}</strong>: ${n} quejas en 30 días (umbral ${umbral}) — la nota pública de esta categoría puede bajar.`);
+      } else if (n >= Math.ceil(umbral/2) && n > 0) {
+        if (estado !== 'rojo') estado = 'amarillo';
+        detalles.push(`🟡 <strong>${cat}</strong>: ${n} de ${umbral} quejas. Tienes margen para corregirlo antes de que afecte a tu nota pública.`);
+      } else if (n > 0) {
+        detalles.push(`🟢 <strong>${cat}</strong>: ${n} aviso registrado, sin riesgo todavía.`);
+      }
+    });
+
+    const semaforoBox = document.getElementById('semaforo-box');
+    const semaforoContenido = document.getElementById('semaforo-contenido');
+
+    if (detalles.length === 0) {
+      semaforoBox.style.borderColor = 'var(--green)';
+      semaforoContenido.innerHTML = `🟢 <strong>Todo en orden.</strong> No hay quejas privadas registradas en los últimos 30 días. Tu reputación pública está protegida.`;
+    } else {
+      semaforoBox.style.borderColor = estado === 'rojo' ? 'var(--red)' : (estado === 'amarillo' ? 'var(--gold)' : 'var(--green)');
+      semaforoContenido.innerHTML = detalles.map(d => `<div style="margin-bottom:6px;">${d}</div>`).join('');
+    }
+
+    // --- ALERTAS CRÍTICAS ---
+    const { data: alertas, error: errAlertas } = await supabaseClient
+      .from('alertas')
+      .select('*')
+      .eq('restaurante_id', RESTAURANTE_ID)
+      .eq('vista', false)
+      .order('fecha', { ascending: false });
+
+    if (errAlertas) throw errAlertas;
+
+    document.getElementById('m-alertas').textContent = alertas.length;
+
+    const alertasBox = document.getElementById('alertas-box');
+    const alertasContenido = document.getElementById('alertas-contenido');
+
+    if (alertas.length > 0) {
+      alertasBox.style.display = 'block';
+      alertasContenido.innerHTML = alertas.map(a => `
+        <div style="background:var(--red-pale);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--text);line-height:1.5;">
+          <div style="font-weight:700;color:var(--red);margin-bottom:4px;">⚠️ ${tiempoRelativo(a.fecha)}</div>
+          <div>"${a.texto_original}"</div>
+        </div>
+      `).join('');
+    } else {
+      alertasBox.style.display = 'none';
+    }
+
+  } catch (err) {
+    console.error('Error cargando panel:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', cargarPanelDueno);
 </script>
 </body>
 </html>
