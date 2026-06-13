@@ -742,30 +742,30 @@
   <!-- Rating -->
   <div class="rating-card">
     <div class="rating-big">
-      <div class="rating-num">4.2</div>
-      <div class="stars-row">★★★★☆</div>
-      <div class="rating-count">87 reseñas</div>
+      <div class="rating-num" id="rating-num">4.2</div>
+      <div class="stars-row" id="rating-stars">★★★★☆</div>
+      <div class="rating-count" id="rating-count">87 reseñas</div>
     </div>
     <div class="rating-bars">
       <div class="bar-row">
         <div class="bar-label">Comida</div>
-        <div class="bar-track"><div class="bar-fill" style="width:88%"></div></div>
-        <div class="bar-val">4.4</div>
+        <div class="bar-track"><div class="bar-fill" id="bar-comida" style="width:88%"></div></div>
+        <div class="bar-val" id="val-comida">4.4</div>
       </div>
       <div class="bar-row">
         <div class="bar-label">Personal</div>
-        <div class="bar-track"><div class="bar-fill" style="width:84%"></div></div>
-        <div class="bar-val">4.2</div>
+        <div class="bar-track"><div class="bar-fill" id="bar-personal" style="width:84%"></div></div>
+        <div class="bar-val" id="val-personal">4.2</div>
       </div>
       <div class="bar-row">
         <div class="bar-label">Limpieza</div>
-        <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
-        <div class="bar-val">4.0</div>
+        <div class="bar-track"><div class="bar-fill" id="bar-limpieza" style="width:80%"></div></div>
+        <div class="bar-val" id="val-limpieza">4.0</div>
       </div>
       <div class="bar-row">
         <div class="bar-label">Servicio</div>
-        <div class="bar-track"><div class="bar-fill bad" style="width:60%"></div></div>
-        <div class="bar-val" style="color:var(--red)">3.0</div>
+        <div class="bar-track"><div class="bar-fill bad" id="bar-servicio" style="width:60%"></div></div>
+        <div class="bar-val" id="val-servicio" style="color:var(--red)">3.0</div>
       </div>
     </div>
   </div>
@@ -851,19 +851,9 @@
     <div class="section-link" onclick="showScreen('resenas', document.getElementById('tab-resenas'))">Ver todas →</div>
   </div>
 
-  <div class="resena-card">
-    <div class="resena-header">
-      <div class="avatar" style="background:#e8f5ee;color:var(--green);">AM</div>
-      <div style="flex:1;">
-        <div class="resena-name">Amina M.</div>
-        <div class="resena-date">hace 2 días · <span class="resena-stars">★★★★★</span></div>
-      </div>
-    </div>
-    <div class="resena-text">"El yassa estaba increíble, como en casa. El personal muy amable y la ración más que generosa."</div>
-    <div class="resena-cats">
-      <span class="cat-chip">Comida <strong>5.0</strong></span>
-      <span class="cat-chip">Personal <strong>5.0</strong></span>
-      <span class="cat-chip">Servicio <strong>3.0</strong></span>
+  <div id="ultima-resena-container">
+    <div class="resena-card">
+      <div class="resena-text" style="color:var(--mid);">Cargando reseñas...</div>
     </div>
   </div>
 
@@ -990,56 +980,13 @@
 <div id="screen-resenas" class="screen">
 
   <div class="section-header" style="padding-top:16px;">
-    <div class="section-title">87 reseñas</div>
-    <div style="font-size:13px;color:var(--gold);font-weight:600;">★ 4.2</div>
+    <div class="section-title" id="resenas-titulo">87 reseñas</div>
+    <div style="font-size:13px;color:var(--gold);font-weight:600;" id="resenas-rating-mini">★ 4.2</div>
   </div>
 
-  <div class="resena-card">
-    <div class="resena-header">
-      <div class="avatar" style="background:#e8f5ee;color:var(--green);">AM</div>
-      <div style="flex:1;">
-        <div class="resena-name">Amina M.</div>
-        <div class="resena-date">hace 2 días · <span class="resena-stars">★★★★★</span></div>
-      </div>
-    </div>
-    <div class="resena-text">"El yassa estaba increíble, como en casa. El personal muy amable y la ración más que generosa."</div>
-    <div class="resena-cats">
-      <span class="cat-chip">Comida <strong>5.0</strong></span>
-      <span class="cat-chip">Personal <strong>5.0</strong></span>
-      <span class="cat-chip">Limpieza <strong>4.0</strong></span>
-      <span class="cat-chip">Servicio <strong>3.0</strong></span>
-    </div>
-  </div>
-
-  <div class="resena-card">
-    <div class="resena-header">
-      <div class="avatar" style="background:#e3f2fd;color:#1565c0;">JL</div>
-      <div style="flex:1;">
-        <div class="resena-name">Josep L.</div>
-        <div class="resena-date">hace 5 días · <span class="resena-stars">★★★★☆</span></div>
-      </div>
-    </div>
-    <div class="resena-text">"Muy buena comida y precio muy justo. Tardaron un poco pero mereció la espera."</div>
-    <div class="resena-cats">
-      <span class="cat-chip">Comida <strong>4.5</strong></span>
-      <span class="cat-chip">Limpieza <strong>4.0</strong></span>
-      <span class="cat-chip">Servicio <strong>3.5</strong></span>
-    </div>
-  </div>
-
-  <div class="resena-card">
-    <div class="resena-header">
-      <div class="avatar" style="background:#fff8e1;color:#e65100;">FD</div>
-      <div style="flex:1;">
-        <div class="resena-name">Fatou D.</div>
-        <div class="resena-date">hace 1 semana · <span class="resena-stars">★★★★★</span></div>
-      </div>
-    </div>
-    <div class="resena-text">"Le thiéboudiène est excellent ! Ça me rappelle la cuisine de ma maman à Dakar."</div>
-    <div class="resena-cats">
-      <span class="cat-chip">Comida <strong>5.0</strong></span>
-      <span class="cat-chip">Personal <strong>4.5</strong></span>
-      <span class="cat-chip">Servicio <strong>4.0</strong></span>
+  <div id="resenas-lista-container">
+    <div class="resena-card">
+      <div class="resena-text" style="color:var(--mid);">Cargando reseñas...</div>
     </div>
   </div>
 
@@ -1263,6 +1210,151 @@ function detectarCategoriaQueja(ratings) {
   });
   return peor;
 }
+
+// ============================================
+// CARGAR DATOS REALES DEL MURO DE RECOMENDACIONES
+// ============================================
+
+function tiempoRelativo(fechaStr) {
+  const fecha = new Date(fechaStr);
+  const ahora = new Date();
+  const diffMs = ahora - fecha;
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHoras = Math.floor(diffMin / 60);
+  const diffDias = Math.floor(diffHoras / 24);
+
+  if (diffMin < 1) return 'justo ahora';
+  if (diffMin < 60) return `hace ${diffMin} min`;
+  if (diffHoras < 24) return `hace ${diffHoras}h`;
+  if (diffDias === 1) return 'hace 1 día';
+  if (diffDias < 7) return `hace ${diffDias} días`;
+  const semanas = Math.floor(diffDias / 7);
+  if (semanas === 1) return 'hace 1 semana';
+  return `hace ${semanas} semanas`;
+}
+
+function estrellasTexto(valor) {
+  const redondeado = Math.round(valor);
+  return '★'.repeat(redondeado) + '☆'.repeat(5 - redondeado);
+}
+
+function iniciales(nombre) {
+  if (!nombre) return 'AN';
+  const partes = nombre.trim().split(' ');
+  if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
+  return (partes[0][0] + partes[1][0]).toUpperCase();
+}
+
+function renderResenaCard(r) {
+  const nombre = r.usuario_nombre || 'Cliente Restu';
+  const fecha = tiempoRelativo(r.fecha);
+  const stars = estrellasTexto(r.val_global);
+  const ini = iniciales(nombre);
+
+  let chips = '';
+  if (r.val_comida) chips += `<span class="cat-chip">Comida <strong>${Number(r.val_comida).toFixed(1)}</strong></span>`;
+  if (r.val_personal) chips += `<span class="cat-chip">Personal <strong>${Number(r.val_personal).toFixed(1)}</strong></span>`;
+  if (r.val_limpieza) chips += `<span class="cat-chip">Limpieza <strong>${Number(r.val_limpieza).toFixed(1)}</strong></span>`;
+  if (r.val_servicio) chips += `<span class="cat-chip">Servicio <strong>${Number(r.val_servicio).toFixed(1)}</strong></span>`;
+
+  const texto = r.texto ? `"${r.texto}"` : '<span style="color:var(--mid);font-style:italic;">Sin comentario escrito.</span>';
+
+  return `
+  <div class="resena-card">
+    <div class="resena-header">
+      <div class="avatar" style="background:#e8f5ee;color:var(--green);">${ini}</div>
+      <div style="flex:1;">
+        <div class="resena-name">${nombre}</div>
+        <div class="resena-date">${fecha} · <span class="resena-stars">${stars}</span></div>
+      </div>
+    </div>
+    <div class="resena-text">${texto}</div>
+    <div class="resena-cats">${chips}</div>
+  </div>`;
+}
+
+async function cargarResenasPublicas() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('resenas')
+      .select('*')
+      .eq('restaurante_id', RESTAURANTE_ID)
+      .eq('es_publica', true)
+      .order('fecha', { ascending: false });
+
+    if (error) throw error;
+
+    const total = data.length;
+
+    // --- Última reseña (pantalla inicio) ---
+    const ultimaContainer = document.getElementById('ultima-resena-container');
+    if (total > 0) {
+      ultimaContainer.innerHTML = renderResenaCard(data[0]);
+    } else {
+      ultimaContainer.innerHTML = `<div class="resena-card"><div class="resena-text" style="color:var(--mid);">Aún no hay reseñas públicas. ¡Sé el primero en valorar!</div></div>`;
+    }
+
+    // --- Lista completa (pantalla reseñas) ---
+    const listaContainer = document.getElementById('resenas-lista-container');
+    if (total > 0) {
+      listaContainer.innerHTML = data.map(renderResenaCard).join('');
+    } else {
+      listaContainer.innerHTML = `<div class="resena-card"><div class="resena-text" style="color:var(--mid);">Aún no hay reseñas públicas. ¡Sé el primero en valorar!</div></div>`;
+    }
+
+    // --- Calcular medias globales y por categoría ---
+    if (total > 0) {
+      const medias = { comida: [], personal: [], limpieza: [], servicio: [], global: [] };
+      data.forEach(r => {
+        if (r.val_comida) medias.comida.push(Number(r.val_comida));
+        if (r.val_personal) medias.personal.push(Number(r.val_personal));
+        if (r.val_limpieza) medias.limpieza.push(Number(r.val_limpieza));
+        if (r.val_servicio) medias.servicio.push(Number(r.val_servicio));
+        if (r.val_global) medias.global.push(Number(r.val_global));
+      });
+
+      const media = arr => arr.length ? (arr.reduce((a,b) => a+b, 0) / arr.length) : 0;
+
+      const mGlobal = media(medias.global);
+      const mComida = media(medias.comida);
+      const mPersonal = media(medias.personal);
+      const mLimpieza = media(medias.limpieza);
+      const mServicio = media(medias.servicio);
+
+      document.getElementById('rating-num').textContent = mGlobal.toFixed(1);
+      document.getElementById('rating-stars').textContent = estrellasTexto(mGlobal);
+      document.getElementById('rating-count').textContent = `${total} reseña${total === 1 ? '' : 's'}`;
+      document.getElementById('resenas-titulo').textContent = `${total} reseña${total === 1 ? '' : 's'}`;
+      document.getElementById('resenas-rating-mini').textContent = `★ ${mGlobal.toFixed(1)}`;
+
+      document.getElementById('val-comida').textContent = mComida.toFixed(1);
+      document.getElementById('bar-comida').style.width = (mComida/5*100) + '%';
+      document.getElementById('val-personal').textContent = mPersonal.toFixed(1);
+      document.getElementById('bar-personal').style.width = (mPersonal/5*100) + '%';
+      document.getElementById('val-limpieza').textContent = mLimpieza.toFixed(1);
+      document.getElementById('bar-limpieza').style.width = (mLimpieza/5*100) + '%';
+      document.getElementById('val-servicio').textContent = mServicio.toFixed(1);
+      document.getElementById('bar-servicio').style.width = (mServicio/5*100) + '%';
+    } else {
+      document.getElementById('rating-num').textContent = '–';
+      document.getElementById('rating-count').textContent = '0 reseñas';
+      document.getElementById('resenas-titulo').textContent = '0 reseñas';
+    }
+
+  } catch (err) {
+    console.error('Error cargando reseñas:', err);
+  }
+}
+
+// Cargar reseñas reales en cuanto la página esté lista
+document.addEventListener('DOMContentLoaded', cargarResenasPublicas);
+
+// Recargar también después de enviar una reseña nueva (con un pequeño delay)
+const enviarResenaOriginal = enviarResena;
+enviarResena = async function() {
+  await enviarResenaOriginal();
+  setTimeout(cargarResenasPublicas, 500);
+};
 
 function mostrarMensaje(texto, tipo) {
   const msg = document.getElementById('resena-msg');
