@@ -3,1458 +3,218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Restu · Al-Waha</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<title>Restu · Descubre restaurantes en Salt y Girona</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
     --green: #1a6b47;
-    --green-light: #2d9e6b;
     --green-pale: #e8f5ee;
     --gold: #c8973a;
-    --gold-light: #f0c96a;
     --cream: #faf8f3;
-    --dark: #1a1a18;
-    --mid: #4a4a44;
-    --light: #9a9a90;
-    --border: #e8e4d8;
-    --white: #ffffff;
-    --red: #d94f3d;
+    --dark: #1a1a1a;
+    --mid: #6b6b66;
+    --border: #ece8de;
   }
+  * { margin:0; padding:0; box-sizing:border-box; font-family: 'DM Sans', -apple-system, sans-serif; }
+  body { background: var(--cream); color: var(--dark); }
+  .container { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #fff; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--dark);
-    min-height: 100vh;
-    max-width: 430px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  /* HERO */
   .hero {
-    height: 260px;
-    background: linear-gradient(160deg, #0d3d28 0%, #1a6b47 50%, #2d9e6b 100%);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
-
-  .hero-pattern {
-    position: absolute;
-    bottom: -30px;
-    right: -30px;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    border: 40px solid rgba(255,255,255,0.05);
-  }
-
-  .hero-pattern2 {
-    position: absolute;
-    top: -20px;
-    left: -20px;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 30px solid rgba(255,255,255,0.04);
-  }
-
-  .hero-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    position: relative;
-    z-index: 2;
-  }
-
-  .restu-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    color: white;
-    letter-spacing: -0.5px;
-  }
-
-  .restu-logo span {
-    color: var(--gold-light);
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 12px;
-  }
-
-  .hero-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    transition: background 0.2s;
-  }
-
-  .hero-btn:hover { background: rgba(255,255,255,0.25); }
-  .hero-btn svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-  .hero-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 20px;
-    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
-    z-index: 2;
-  }
-
-  .resto-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 26px;
-    color: white;
-    line-height: 1.1;
-    margin-bottom: 6px;
-  }
-
-  .resto-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .meta-chip {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.85);
-  }
-
-  .meta-chip svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
-
-  .open-badge {
-    background: #2ecc71;
-    color: white;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-  }
-
-  /* NAV TABS */
-  .nav-tabs {
-    display: flex;
-    background: white;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .nav-tab {
-    flex: 1;
-    padding: 14px 8px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--light);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .nav-tab.active {
-    color: var(--green);
-    border-bottom-color: var(--green);
-    font-weight: 600;
-  }
-
-  /* SCREENS */
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* RATING CARD */
-  .rating-card {
-    margin: 16px;
-    background: white;
-    border-radius: 16px;
-    padding: 16px;
-    border: 1px solid var(--border);
-    display: flex;
-    gap: 16px;
-    align-items: center;
-  }
-
-  .rating-big {
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .rating-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 40px;
-    font-weight: 800;
-    color: var(--dark);
-    line-height: 1;
-  }
-
-  .stars-row {
-    color: var(--gold);
-    font-size: 14px;
-    letter-spacing: 1px;
-    margin: 3px 0;
-  }
-
-  .rating-count {
-    font-size: 11px;
-    color: var(--light);
-  }
-
-  .rating-bars { flex: 1; }
-
-  .bar-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-
-  .bar-label {
-    font-size: 10px;
-    color: var(--light);
-    width: 52px;
-    flex-shrink: 0;
-  }
-
-  .bar-track {
-    flex: 1;
-    height: 5px;
-    background: var(--green-pale);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    background: var(--green-light);
-  }
-
-  .bar-fill.warn { background: var(--gold); }
-  .bar-fill.bad { background: var(--red); }
-
-  .bar-val {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--dark);
-    width: 20px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  /* TAGS */
-  .tags-row {
-    display: flex;
-    gap: 6px;
-    padding: 0 16px 16px;
-    flex-wrap: wrap;
-  }
-
-  .tag {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: var(--green-pale);
-    color: var(--green);
-    border: 1px solid rgba(26,107,71,0.15);
-  }
-
-  /* LANG SELECTOR */
-  .lang-selector {
-    display: flex;
-    gap: 6px;
-    padding: 0 16px 16px;
-  }
-
-  .lang-btn {
-    flex: 1;
-    padding: 8px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: white;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--mid);
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .lang-btn.active {
     background: var(--green);
-    color: white;
-    border-color: var(--green);
+    color: #fff;
+    padding: 32px 20px 28px;
+    text-align: center;
   }
+  .logo { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 6px; }
+  .logo span { color: #a8e6c3; }
+  .tagline { font-size: 14px; opacity: 0.9; }
 
-  /* SECTION HEADER */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px 12px;
+  .search-bar {
+    margin: -18px 16px 0;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--mid);
+    position: relative;
+    z-index: 2;
   }
 
   .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--dark);
-  }
-
-  .section-link {
-    font-size: 12px;
-    color: var(--green);
-    font-weight: 500;
-    cursor: pointer;
-  }
-
-  /* PLATO CARDS */
-  .plato-card {
-    margin: 0 16px 10px;
-    background: white;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    padding: 12px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    transition: transform 0.15s, box-shadow 0.15s;
-    cursor: pointer;
-  }
-
-  .plato-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  }
-
-  .plato-emoji {
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    flex-shrink: 0;
-  }
-
-  .plato-body { flex: 1; min-width: 0; }
-
-  .plato-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 3px;
-    gap: 8px;
-  }
-
-  .plato-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--dark);
-    line-height: 1.2;
-  }
-
-  .plato-price {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--green);
-    flex-shrink: 0;
-  }
-
-  .plato-desc {
-    font-size: 11px;
-    color: var(--light);
-    line-height: 1.5;
-    margin-bottom: 6px;
-  }
-
-  .plato-footer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .badge {
-    font-size: 9px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 20px;
-    letter-spacing: 0.3px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 24px 20px 12px;
   }
 
-  .badge-hot { background: #fff3e0; color: #e65100; }
-  .badge-new { background: var(--green-pale); color: var(--green); }
-
-  .votes {
-    font-size: 11px;
-    color: var(--light);
+  .resto-card {
     display: flex;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .votes svg { width: 11px; height: 11px; fill: var(--gold); }
-
-  /* RESEÑAS */
-  .resena-card {
-    margin: 0 16px 10px;
-    background: white;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    padding: 14px;
-  }
-
-  .resena-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .resena-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--dark);
-  }
-
-  .resena-date {
-    font-size: 11px;
-    color: var(--light);
-  }
-
-  .resena-stars { color: var(--gold); font-size: 12px; }
-
-  .resena-text {
-    font-size: 13px;
-    color: var(--mid);
-    line-height: 1.6;
-    margin-bottom: 10px;
-    font-style: italic;
-  }
-
-  .resena-cats {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .cat-chip {
-    font-size: 10px;
-    color: var(--light);
-    background: var(--cream);
-    padding: 3px 8px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-  }
-
-  .cat-chip strong { color: var(--dark); }
-
-  /* FORM RESEÑA */
-  .form-section {
-    margin: 0 16px 10px;
-    background: white;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    padding: 16px;
-  }
-
-  .form-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--dark);
-    margin-bottom: 4px;
-  }
-
-  .form-sub {
-    font-size: 12px;
-    color: var(--light);
-    margin-bottom: 16px;
-  }
-
-  .form-group { margin-bottom: 14px; }
-
-  .form-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--mid);
-    margin-bottom: 6px;
-    display: block;
-  }
-
-  .star-input {
-    display: flex;
-    gap: 6px;
-  }
-
-  .star-btn {
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--border);
-    transition: color 0.1s, transform 0.1s;
-    line-height: 1;
-  }
-
-  .star-btn.lit { color: var(--gold); }
-  .star-btn:hover { transform: scale(1.2); }
-
-  .form-select {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    font-size: 13px;
-    color: var(--dark);
-    background: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    appearance: none;
-    cursor: pointer;
-  }
-
-  .form-textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    font-size: 13px;
-    color: var(--dark);
-    background: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    resize: none;
-    height: 80px;
-    line-height: 1.5;
-  }
-
-  .form-textarea:focus, .form-select:focus {
-    outline: none;
-    border-color: var(--green-light);
-  }
-
-  .foto-upload {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1.5px dashed var(--border);
-    font-size: 12px;
-    color: var(--light);
-    cursor: pointer;
-    background: var(--cream);
-    transition: border-color 0.2s;
-  }
-
-  .foto-upload:hover { border-color: var(--green-light); color: var(--green); }
-  .foto-upload svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
-
-  .btn-submit {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    background: var(--green);
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: 'Syne', sans-serif;
-    cursor: pointer;
-    letter-spacing: 0.3px;
-    transition: background 0.2s, transform 0.15s;
-    margin-top: 4px;
-  }
-
-  .btn-submit:hover { background: var(--green-light); transform: translateY(-1px); }
-  .btn-submit:active { transform: translateY(0); }
-
-  /* INFO SCREEN */
-  .info-card {
-    margin: 16px;
-    background: white;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    padding: 16px;
-  }
-
-  .info-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 10px 0;
+    gap: 14px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border);
-  }
-
-  .info-row:last-child { border-bottom: none; }
-
-  .info-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: var(--green-pale);
-    display: flex;
+    text-decoration: none;
+    color: inherit;
     align-items: center;
-    justify-content: center;
+  }
+  .resto-card:active { background: var(--green-pale); }
+
+  .resto-emoji {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--green-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
     flex-shrink: 0;
   }
-
-  .info-icon svg { width: 15px; height: 15px; stroke: var(--green); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-  .info-label { font-size: 11px; color: var(--light); margin-bottom: 2px; }
-  .info-value { font-size: 13px; color: var(--dark); font-weight: 500; }
-
-  .share-row {
-    display: flex;
-    gap: 10px;
-    margin: 0 16px 16px;
+  .resto-info { flex: 1; min-width: 0; }
+  .resto-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .resto-meta { font-size: 12px; color: var(--mid); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .resto-tag {
+    background: var(--green-pale); color: var(--green);
+    font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+  }
+  .resto-rating {
+    font-size: 13px; font-weight: 700; color: var(--gold);
+    display: flex; align-items: center; gap: 3px; flex-shrink: 0;
   }
 
-  .share-btn {
-    flex: 1;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: white;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--mid);
-    cursor: pointer;
+  .empty-state {
+    padding: 40px 20px;
     text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
+    color: var(--mid);
+    font-size: 13px;
+    line-height: 1.6;
   }
 
-  .share-btn:hover { border-color: var(--green); color: var(--green); }
-  .share-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+  .footer {
+    padding: 32px 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--mid);
+  }
+  .footer a { color: var(--green); font-weight: 600; text-decoration: none; }
 
-  /* BOTTOM PADDING */
   .bottom-space { height: 24px; }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .screen.active > * {
-    animation: fadeUp 0.3s ease forwards;
-  }
-
-  .screen.active > *:nth-child(2) { animation-delay: 0.05s; }
-  .screen.active > *:nth-child(3) { animation-delay: 0.1s; }
-  .screen.active > *:nth-child(4) { animation-delay: 0.15s; }
-  .screen.active > *:nth-child(5) { animation-delay: 0.2s; }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-pattern"></div>
-  <div class="hero-pattern2"></div>
-  <div class="hero-top">
-    <div class="restu-logo">res<span>tu</span></div>
-    <div class="hero-actions">
-      <button class="hero-btn" title="Compartir">
-        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      </button>
-      <button class="hero-btn" title="Guardar favorito">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </button>
-    </div>
-  </div>
-  <div class="hero-info">
-    <div class="resto-name" id="resto-name">Cargando...</div>
-    <div class="resto-meta">
-      <span class="open-badge">Abierto</span>
-      <span class="meta-chip" id="resto-direccion-chip">
-        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span id="resto-direccion">—</span>
-      </span>
-      <span class="meta-chip">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span id="resto-horario">—</span>
-      </span>
-    </div>
-  </div>
-</div>
+<div class="container">
 
-<!-- NAV TABS -->
-<div class="nav-tabs">
-  <div class="nav-tab active" id="tab-inicio" onclick="showScreen('inicio', this)">Inicio</div>
-  <div class="nav-tab" id="tab-carta" onclick="showScreen('carta', this)">Carta</div>
-  <div class="nav-tab" id="tab-resenas" onclick="showScreen('resenas', this)">Reseñas</div>
-  <div class="nav-tab" id="tab-info" onclick="showScreen('info', this)">Info</div>
-</div>
-
-<!-- SCREEN: INICIO -->
-<div id="screen-inicio" class="screen active">
-
-  <!-- Rating -->
-  <div class="rating-card">
-    <div class="rating-big">
-      <div class="rating-num" id="rating-num">4.2</div>
-      <div class="stars-row" id="rating-stars">★★★★☆</div>
-      <div class="rating-count" id="rating-count">87 reseñas</div>
-    </div>
-    <div class="rating-bars">
-      <div class="bar-row">
-        <div class="bar-label">Comida</div>
-        <div class="bar-track"><div class="bar-fill" id="bar-comida" style="width:88%"></div></div>
-        <div class="bar-val" id="val-comida">4.4</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Personal</div>
-        <div class="bar-track"><div class="bar-fill" id="bar-personal" style="width:84%"></div></div>
-        <div class="bar-val" id="val-personal">4.2</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Limpieza</div>
-        <div class="bar-track"><div class="bar-fill" id="bar-limpieza" style="width:80%"></div></div>
-        <div class="bar-val" id="val-limpieza">4.0</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Servicio</div>
-        <div class="bar-track"><div class="bar-fill bad" id="bar-servicio" style="width:60%"></div></div>
-        <div class="bar-val" id="val-servicio" style="color:var(--red)">3.0</div>
-      </div>
-    </div>
+  <div class="hero">
+    <div class="logo">res<span>tu</span></div>
+    <div class="tagline">Descubre los mejores restaurantes de Salt y Girona</div>
   </div>
 
-  <!-- Tags -->
-  <div class="tags-row" id="tags-cocina">
-    <span class="tag">🥩 Halal</span>
+  <div class="search-bar">
+    🔍 Busca por tipo de cocina, nombre o zona...
   </div>
 
-  <!-- Idioma -->
-  <div class="lang-selector">
-    <button class="lang-btn active" onclick="setLang(this)">ES</button>
-    <button class="lang-btn" onclick="setLang(this)">FR</button>
-    <button class="lang-btn" onclick="setLang(this)">AR</button>
-    <button class="lang-btn" onclick="setLang(this)">WO</button>
+  <div class="section-title">Restaurantes en Restu</div>
+
+  <div id="restaurantes-container">
+    <div class="empty-state">Cargando restaurantes...</div>
   </div>
 
-  <!-- Platos estrella -->
-  <div class="section-header">
-    <div class="section-title">Platos estrella</div>
-    <div class="section-link" onclick="showScreen('carta', document.getElementById('tab-carta'))">Ver carta →</div>
-  </div>
-
-  <div id="platos-estrella-container">
-    <div class="resena-card"><div class="resena-text" style="color:var(--mid);">Cargando carta...</div></div>
-  </div>
-
-  <!-- Última reseña -->
-  <div class="section-header" style="margin-top:8px;">
-    <div class="section-title">Última reseña</div>
-    <div class="section-link" onclick="showScreen('resenas', document.getElementById('tab-resenas'))">Ver todas →</div>
-  </div>
-
-  <div id="ultima-resena-container">
-    <div class="resena-card">
-      <div class="resena-text" style="color:var(--mid);">Cargando reseñas...</div>
-    </div>
-  </div>
-
-  <div class="bottom-space"></div>
-</div>
-
-<!-- SCREEN: CARTA -->
-<div id="screen-carta" class="screen">
-
-  <div id="carta-container">
-    <div class="resena-card" style="margin-top:16px;"><div class="resena-text" style="color:var(--mid);">Cargando carta...</div></div>
-  </div>
-
-  <div class="bottom-space"></div>
-</div>
-
-<!-- SCREEN: RESEÑAS -->
-<div id="screen-resenas" class="screen">
-
-  <div class="section-header" style="padding-top:16px;">
-    <div class="section-title" id="resenas-titulo">87 reseñas</div>
-    <div style="font-size:13px;color:var(--gold);font-weight:600;" id="resenas-rating-mini">★ 4.2</div>
-  </div>
-
-  <div id="resenas-lista-container">
-    <div class="resena-card">
-      <div class="resena-text" style="color:var(--mid);">Cargando reseñas...</div>
-    </div>
-  </div>
-
-  <!-- CTA dejar reseña -->
-  <div style="margin:4px 16px 0;">
-    <button class="btn-submit" onclick="showScreen('resena-form', document.getElementById('tab-resenas'))">
-      ✍️ Dejar mi reseña
-    </button>
-  </div>
-
-  <div class="bottom-space"></div>
-</div>
-
-<!-- SCREEN: RESEÑA FORM -->
-<div id="screen-resena-form" class="screen">
-  <div style="height:16px;"></div>
-  <div class="form-section">
-    <div class="form-title">Cuéntanos tu experiencia</div>
-    <div class="form-sub">Ayudas a otros clientes y al restaurante a mejorar</div>
-
-    <div class="form-group">
-      <label class="form-label">¿Qué pediste?</label>
-      <select class="form-select">
-        <option>Pollo Yassa</option>
-        <option>Thiéboudiène</option>
-        <option>Kebab Mixto</option>
-        <option>Sopa de Maní</option>
-        <option>Otro plato</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Comida</label>
-      <div class="star-input" id="stars-comida">
-        <span class="star-btn" onclick="rate('comida',1)">★</span>
-        <span class="star-btn" onclick="rate('comida',2)">★</span>
-        <span class="star-btn" onclick="rate('comida',3)">★</span>
-        <span class="star-btn" onclick="rate('comida',4)">★</span>
-        <span class="star-btn" onclick="rate('comida',5)">★</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Personal</label>
-      <div class="star-input" id="stars-personal">
-        <span class="star-btn" onclick="rate('personal',1)">★</span>
-        <span class="star-btn" onclick="rate('personal',2)">★</span>
-        <span class="star-btn" onclick="rate('personal',3)">★</span>
-        <span class="star-btn" onclick="rate('personal',4)">★</span>
-        <span class="star-btn" onclick="rate('personal',5)">★</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Limpieza</label>
-      <div class="star-input" id="stars-limpieza">
-        <span class="star-btn" onclick="rate('limpieza',1)">★</span>
-        <span class="star-btn" onclick="rate('limpieza',2)">★</span>
-        <span class="star-btn" onclick="rate('limpieza',3)">★</span>
-        <span class="star-btn" onclick="rate('limpieza',4)">★</span>
-        <span class="star-btn" onclick="rate('limpieza',5)">★</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Tiempo de servicio</label>
-      <div class="star-input" id="stars-servicio">
-        <span class="star-btn" onclick="rate('servicio',1)">★</span>
-        <span class="star-btn" onclick="rate('servicio',2)">★</span>
-        <span class="star-btn" onclick="rate('servicio',3)">★</span>
-        <span class="star-btn" onclick="rate('servicio',4)">★</span>
-        <span class="star-btn" onclick="rate('servicio',5)">★</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Tu comentario (opcional)</label>
-      <textarea class="form-textarea" id="resena-texto" placeholder="¿Qué te pareció? ¿Lo recomendarías?"></textarea>
-    </div>
-
-    <div class="form-group">
-      <div class="foto-upload">
-        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Añadir foto del plato
-      </div>
-    </div>
-
-    <div id="resena-msg" style="display:none;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:8px;"></div>
-
-    <button class="btn-submit" id="btn-enviar-resena" onclick="enviarResena()">Enviar reseña</button>
-  </div>
-
-  <div class="bottom-space"></div>
-</div>
-
-<!-- SCREEN: INFO -->
-<div id="screen-info" class="screen">
-
-  <div class="info-card" style="margin-top:16px;">
-    <div class="info-row">
-      <div class="info-icon">
-        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      </div>
-      <div>
-        <div class="info-label">Dirección</div>
-        <div class="info-value" id="info-direccion">Carrer Major, 14 · Salt, Girona</div>
-      </div>
-    </div>
-    <div class="info-row">
-      <div class="info-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      </div>
-      <div>
-        <div class="info-label">Horario</div>
-        <div class="info-value" id="info-horario">Lun–Vie: 12:00–23:00</div>
-      </div>
-    </div>
-    <div class="info-row">
-      <div class="info-icon">
-        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      </div>
-      <div>
-        <div class="info-label">Teléfono</div>
-        <div class="info-value" id="info-telefono">+34 972 XXX XXX</div>
-      </div>
-    </div>
-    <div class="info-row">
-      <div class="info-icon">
-        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      </div>
-      <div>
-        <div class="info-label">Idiomas</div>
-        <div class="info-value" id="info-idiomas">Español · Français · العربية · Wolof</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="share-row">
-    <button class="share-btn">
-      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      WhatsApp
-    </button>
-    <button class="share-btn">
-      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      Compartir
-    </button>
-  </div>
-
-  <div style="margin:0 16px;background:var(--green-pale);border-radius:14px;padding:14px 16px;border:1px solid rgba(26,107,71,0.15);">
-    <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:4px;">Restu · Salt & Girona</div>
-    <div style="font-size:12px;color:var(--mid);line-height:1.5;">La plataforma de restaurantes locales. Descubre, opina y reserva en los mejores sitios de tu zona.</div>
+  <div class="footer">
+    ¿Tienes un restaurante en Salt o Girona?<br>
+    <a href="https://wa.me/34000000000" target="_blank">Habla con nosotros · Prueba gratis 30 días</a>
   </div>
 
   <div class="bottom-space"></div>
 </div>
 
 <script>
-function showScreen(name, tab) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  const screen = document.getElementById('screen-' + name);
-  if (screen) screen.classList.add('active');
-  if (tab) tab.classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-function setLang(el) {
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-const ratings = {};
-function rate(cat, val) {
-  ratings[cat] = val;
-  const stars = document.querySelectorAll('#stars-' + cat + ' .star-btn');
-  stars.forEach((s, i) => s.classList.toggle('lit', i < val));
-}
-
-// Tab reseñas muestra el form
-document.getElementById('tab-resenas').addEventListener('click', function() {
-  showScreen('resenas', this);
-});
-
-// ============================================
-// RESTU - CONEXIÓN SUPABASE + LÓGICA SBF
-// ============================================
-
 const SUPABASE_URL = 'https://zzmjgsbykygonuwjpkqn.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6bWpnc2J5a3lnb251d2pwa3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMDcxNDgsImV4cCI6MjA5NjY4MzE0OH0.H1rf8qr9I4Y40ZazfnOVp7A5PiGZxMTaSweyBPbI358';
-let RESTAURANTE_ID = null; // se carga dinámicamente según el slug de la URL
-let RESTAURANTE_DATA = null;
-
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ============================================
-// CARGAR RESTAURANTE SEGÚN EL SLUG DE LA URL
-// /r/al-waha  ->  slug = "al-waha"
-// ============================================
-
-const ICONOS_COCINA = {
-  marroqui: '🫖 Marroquí',
-  senegales: '🌍 Senegalés',
-  halal: '🥩 Halal',
-  gambia: '🌍 Gambiano',
-  mediterraneo: '🌿 Mediterráneo',
-  espanol: '🥘 Español'
+const EMOJI_COCINA = {
+  marroqui: '🫖',
+  senegales: '🌍',
+  halal: '🥩',
+  gambia: '🌍',
+  mediterraneo: '🌿',
+  espanol: '🥘'
 };
 
-const DIAS_ABREV = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const ETIQUETA_COCINA = {
+  marroqui: 'Marroquí',
+  senegales: 'Senegalés',
+  halal: 'Halal',
+  gambia: 'Gambiano',
+  mediterraneo: 'Mediterráneo',
+  espanol: 'Español'
+};
 
-function getSlugFromURL() {
-  // Espera URLs tipo /r/al-waha
-  const partes = window.location.pathname.split('/').filter(Boolean);
-  const idx = partes.indexOf('r');
-  if (idx !== -1 && partes[idx + 1]) return partes[idx + 1];
-  // Fallback para pruebas: ?slug=al-waha
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('slug')) return params.get('slug');
-  return 'al-waha'; // valor por defecto para desarrollo
+function emojiPara(tipoCocina) {
+  if (!tipoCocina || !tipoCocina.length) return '🍽️';
+  for (const t of tipoCocina) {
+    if (EMOJI_COCINA[t]) return EMOJI_COCINA[t];
+  }
+  return '🍽️';
 }
 
-async function cargarRestaurante() {
-  const slug = getSlugFromURL();
+async function cargarRestaurantes() {
+  const container = document.getElementById('restaurantes-container');
 
   try {
-    const { data, error } = await supabaseClient
+    // Para cada restaurante, calculamos su valoración media real
+    const { data: restaurantes, error } = await supabaseClient
       .from('restaurantes')
       .select('*')
-      .eq('slug', slug)
-      .single();
+      .eq('activo', true)
+      .order('fecha_creacion', { ascending: true });
 
-    if (error || !data) {
-      document.getElementById('resto-name').textContent = 'Restaurante no encontrado';
-      document.getElementById('resto-direccion').textContent = 'Verifica el enlace';
+    if (error) throw error;
+
+    if (!restaurantes || restaurantes.length === 0) {
+      container.innerHTML = '<div class="empty-state">Próximamente nuevos restaurantes en Salt y Girona. 🌱</div>';
       return;
     }
 
-    RESTAURANTE_DATA = data;
-    RESTAURANTE_ID = data.id;
-
-    // Título y cabecera
-    document.title = 'Restu · ' + data.nombre;
-    document.getElementById('resto-name').textContent = data.nombre;
-    document.getElementById('resto-direccion').textContent = data.direccion || data.ciudad || '';
-    document.getElementById('resto-horario').textContent = data.horario ? data.horario.split('·')[0].trim() : 'Horario no disponible';
-
-    // Info screen
-    document.getElementById('info-direccion').textContent = (data.direccion || '') + (data.ciudad ? ' · ' + data.ciudad : '');
-    document.getElementById('info-horario').textContent = data.horario || '—';
-    document.getElementById('info-telefono').textContent = data.telefono || '—';
-
-    const nombresIdiomas = { es: 'Español', fr: 'Français', ar: 'العربية', en: 'English', wo: 'Wolof' };
-    if (data.idiomas && data.idiomas.length) {
-      document.getElementById('info-idiomas').textContent = data.idiomas.map(i => nombresIdiomas[i] || i).join(' · ');
-    }
-
-    // Tags de tipo de cocina
-    if (data.tipo_cocina && data.tipo_cocina.length) {
-      const tagsHtml = data.tipo_cocina.map(t => `<span class="tag">${ICONOS_COCINA[t] || t}</span>`).join('');
-      document.getElementById('tags-cocina').innerHTML = tagsHtml;
-    }
-
-    // Ahora que sabemos el RESTAURANTE_ID, cargamos el resto de datos
-    await Promise.all([
-      cargarResenasPublicas(),
-      cargarCarta()
-    ]);
-
-  } catch (err) {
-    console.error('Error cargando restaurante:', err);
-  }
-}
-
-// Palabras clave que disparan una alerta crítica inmediata
-const PALABRAS_CRITICAS = [
-  'vomito', 'vómito', 'vomitos', 'vómitos',
-  'intoxica', 'intoxicación', 'intoxicacion',
-  'discrimina', 'discriminación', 'discriminacion', 'racis',
-  'sucio', 'sucia', 'suciedad', 'cucaracha', 'rata', 'pelo',
-  'asco', 'asqueroso', 'enfermo', 'enferma'
-];
-
-function detectarAlertaCritica(texto) {
-  if (!texto) return false;
-  const t = texto.toLowerCase();
-  return PALABRAS_CRITICAS.some(palabra => t.includes(palabra));
-}
-
-function detectarCategoriaQueja(ratings) {
-  // Devuelve la categoría con peor nota (para reseñas privadas)
-  const categorias = ['comida', 'personal', 'limpieza', 'servicio'];
-  let peor = null;
-  let peorValor = 6;
-  categorias.forEach(cat => {
-    const val = ratings[cat];
-    if (val !== undefined && val < peorValor) {
-      peorValor = val;
-      peor = cat;
-    }
-  });
-  return peor;
-}
-
-// ============================================
-// CARGAR DATOS REALES DEL MURO DE RECOMENDACIONES
-// ============================================
-
-function tiempoRelativo(fechaStr) {
-  const fecha = new Date(fechaStr);
-  const ahora = new Date();
-  const diffMs = ahora - fecha;
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHoras = Math.floor(diffMin / 60);
-  const diffDias = Math.floor(diffHoras / 24);
-
-  if (diffMin < 1) return 'justo ahora';
-  if (diffMin < 60) return `hace ${diffMin} min`;
-  if (diffHoras < 24) return `hace ${diffHoras}h`;
-  if (diffDias === 1) return 'hace 1 día';
-  if (diffDias < 7) return `hace ${diffDias} días`;
-  const semanas = Math.floor(diffDias / 7);
-  if (semanas === 1) return 'hace 1 semana';
-  return `hace ${semanas} semanas`;
-}
-
-function estrellasTexto(valor) {
-  const redondeado = Math.round(valor);
-  return '★'.repeat(redondeado) + '☆'.repeat(5 - redondeado);
-}
-
-function iniciales(nombre) {
-  if (!nombre) return 'AN';
-  const partes = nombre.trim().split(' ');
-  if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
-  return (partes[0][0] + partes[1][0]).toUpperCase();
-}
-
-function renderResenaCard(r) {
-  const nombre = r.usuario_nombre || 'Cliente Restu';
-  const fecha = tiempoRelativo(r.fecha);
-  const stars = estrellasTexto(r.val_global);
-  const ini = iniciales(nombre);
-
-  let chips = '';
-  if (r.val_comida) chips += `<span class="cat-chip">Comida <strong>${Number(r.val_comida).toFixed(1)}</strong></span>`;
-  if (r.val_personal) chips += `<span class="cat-chip">Personal <strong>${Number(r.val_personal).toFixed(1)}</strong></span>`;
-  if (r.val_limpieza) chips += `<span class="cat-chip">Limpieza <strong>${Number(r.val_limpieza).toFixed(1)}</strong></span>`;
-  if (r.val_servicio) chips += `<span class="cat-chip">Servicio <strong>${Number(r.val_servicio).toFixed(1)}</strong></span>`;
-
-  const texto = r.texto ? `"${r.texto}"` : '<span style="color:var(--mid);font-style:italic;">Sin comentario escrito.</span>';
-
-  return `
-  <div class="resena-card">
-    <div class="resena-header">
-      <div class="avatar" style="background:#e8f5ee;color:var(--green);">${ini}</div>
-      <div style="flex:1;">
-        <div class="resena-name">${nombre}</div>
-        <div class="resena-date">${fecha} · <span class="resena-stars">${stars}</span></div>
-      </div>
-    </div>
-    <div class="resena-text">${texto}</div>
-    <div class="resena-cats">${chips}</div>
-  </div>`;
-}
-
-async function cargarResenasPublicas() {
-  try {
-    const { data, error } = await supabaseClient
+    const { data: resenas } = await supabaseClient
       .from('resenas')
-      .select('*')
-      .eq('restaurante_id', RESTAURANTE_ID)
-      .eq('es_publica', true)
-      .order('fecha', { ascending: false });
+      .select('restaurante_id, val_global, es_publica');
 
-    if (error) throw error;
-
-    const total = data.length;
-
-    // --- Última reseña (pantalla inicio) ---
-    const ultimaContainer = document.getElementById('ultima-resena-container');
-    if (total > 0) {
-      ultimaContainer.innerHTML = renderResenaCard(data[0]);
-    } else {
-      ultimaContainer.innerHTML = `<div class="resena-card"><div class="resena-text" style="color:var(--mid);">Aún no hay reseñas públicas. ¡Sé el primero en valorar!</div></div>`;
-    }
-
-    // --- Lista completa (pantalla reseñas) ---
-    const listaContainer = document.getElementById('resenas-lista-container');
-    if (total > 0) {
-      listaContainer.innerHTML = data.map(renderResenaCard).join('');
-    } else {
-      listaContainer.innerHTML = `<div class="resena-card"><div class="resena-text" style="color:var(--mid);">Aún no hay reseñas públicas. ¡Sé el primero en valorar!</div></div>`;
-    }
-
-    // --- Calcular medias globales y por categoría ---
-    if (total > 0) {
-      const medias = { comida: [], personal: [], limpieza: [], servicio: [], global: [] };
-      data.forEach(r => {
-        if (r.val_comida) medias.comida.push(Number(r.val_comida));
-        if (r.val_personal) medias.personal.push(Number(r.val_personal));
-        if (r.val_limpieza) medias.limpieza.push(Number(r.val_limpieza));
-        if (r.val_servicio) medias.servicio.push(Number(r.val_servicio));
-        if (r.val_global) medias.global.push(Number(r.val_global));
-      });
-
-      const media = arr => arr.length ? (arr.reduce((a,b) => a+b, 0) / arr.length) : 0;
-
-      const mGlobal = media(medias.global);
-      const mComida = media(medias.comida);
-      const mPersonal = media(medias.personal);
-      const mLimpieza = media(medias.limpieza);
-      const mServicio = media(medias.servicio);
-
-      document.getElementById('rating-num').textContent = mGlobal.toFixed(1);
-      document.getElementById('rating-stars').textContent = estrellasTexto(mGlobal);
-      document.getElementById('rating-count').textContent = `${total} reseña${total === 1 ? '' : 's'}`;
-      document.getElementById('resenas-titulo').textContent = `${total} reseña${total === 1 ? '' : 's'}`;
-      document.getElementById('resenas-rating-mini').textContent = `★ ${mGlobal.toFixed(1)}`;
-
-      document.getElementById('val-comida').textContent = mComida.toFixed(1);
-      document.getElementById('bar-comida').style.width = (mComida/5*100) + '%';
-      document.getElementById('val-personal').textContent = mPersonal.toFixed(1);
-      document.getElementById('bar-personal').style.width = (mPersonal/5*100) + '%';
-      document.getElementById('val-limpieza').textContent = mLimpieza.toFixed(1);
-      document.getElementById('bar-limpieza').style.width = (mLimpieza/5*100) + '%';
-      document.getElementById('val-servicio').textContent = mServicio.toFixed(1);
-      document.getElementById('bar-servicio').style.width = (mServicio/5*100) + '%';
-    } else {
-      document.getElementById('rating-num').textContent = '–';
-      document.getElementById('rating-count').textContent = '0 reseñas';
-      document.getElementById('resenas-titulo').textContent = '0 reseñas';
-    }
-
-  } catch (err) {
-    console.error('Error cargando reseñas:', err);
-  }
-}
-
-// ============================================
-// CARGAR CARTA REAL DESDE SUPABASE
-// ============================================
-
-const COLORES_CATEGORIA = {
-  entrante: '#fce4ec',
-  principal: '#fff8e1',
-  postre: '#f3e5f5',
-  bebida: '#e3f2fd'
-};
-
-const NOMBRES_CATEGORIA = {
-  entrante: 'Entrantes',
-  principal: 'Platos principales',
-  postre: 'Postres',
-  bebida: 'Bebidas'
-};
-
-function renderPlatoCard(p, conFooter) {
-  const bg = COLORES_CATEGORIA[p.categoria] || '#f5f5f5';
-  let footer = '';
-  if (conFooter && p.etiqueta) {
-    const badgeClass = p.etiqueta === 'Nuevo' ? 'badge-new' : 'badge-hot';
-    const badgeIcon = p.etiqueta === 'Favorito' ? '⭐ ' : '';
-    footer = `<div class="plato-footer"><span class="badge ${badgeClass}">${badgeIcon}${p.etiqueta}</span></div>`;
-  }
-
-  let alergenos = '';
-  if (p.alergenos && p.alergenos.length > 0) {
-    alergenos = `<div style="font-size:11px;color:var(--mid);margin-top:4px;">⚠️ Contiene: ${p.alergenos.join(', ')}</div>`;
-  }
-  if (p.vegetariano) {
-    alergenos += `<div style="font-size:11px;color:var(--green);margin-top:2px;">🌿 Vegetariano</div>`;
-  }
-
-  return `
-  <div class="plato-card">
-    <div class="plato-emoji" style="background:${bg};">${p.emoji || '🍽️'}</div>
-    <div class="plato-body">
-      <div class="plato-top">
-        <div class="plato-name">${p.nombre}</div>
-        <div class="plato-price">${Number(p.precio).toFixed(2).replace('.', ',')}€</div>
-      </div>
-      <div class="plato-desc">${p.descripcion || ''}</div>
-      ${alergenos}
-      ${footer}
-    </div>
-  </div>`;
-}
-
-async function cargarCarta() {
-  try {
-    const { data: platos, error } = await supabaseClient
-      .from('platos')
-      .select('*')
-      .eq('restaurante_id', RESTAURANTE_ID)
-      .eq('activo', true)
-      .order('orden', { ascending: true });
-
-    if (error) throw error;
-
-    // --- Platos estrella (pantalla inicio) ---
-    const destacados = platos.filter(p => p.destacado);
-    const estrellaContainer = document.getElementById('platos-estrella-container');
-    if (destacados.length > 0) {
-      estrellaContainer.innerHTML = destacados.map(p => renderPlatoCard(p, true)).join('');
-    } else {
-      estrellaContainer.innerHTML = '';
-    }
-
-    // --- Carta completa agrupada por categoría ---
-    const cartaContainer = document.getElementById('carta-container');
-    const categorias = ['entrante', 'principal', 'postre', 'bebida'];
-    let html = '';
-    categorias.forEach(cat => {
-      const platosCat = platos.filter(p => p.categoria === cat);
-      if (platosCat.length === 0) return;
-      html += `<div class="section-header" style="padding-top:16px;"><div class="section-title">${NOMBRES_CATEGORIA[cat]}</div></div>`;
-      html += platosCat.map(p => renderPlatoCard(p, true)).join('');
+    const ratingsPorRestaurante = {};
+    (resenas || []).forEach(r => {
+      if (!r.es_publica || !r.val_global) return;
+      if (!ratingsPorRestaurante[r.restaurante_id]) ratingsPorRestaurante[r.restaurante_id] = [];
+      ratingsPorRestaurante[r.restaurante_id].push(Number(r.val_global));
     });
-    cartaContainer.innerHTML = html || '<div class="resena-card"><div class="resena-text" style="color:var(--mid);">La carta se está preparando.</div></div>';
+
+    container.innerHTML = restaurantes.map(r => {
+      const ratings = ratingsPorRestaurante[r.id] || [];
+      const media = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length) : null;
+      const ratingHtml = media
+        ? `<div class="resto-rating">★ ${media.toFixed(1)}</div>`
+        : `<div class="resto-rating" style="color:var(--mid);font-size:11px;">Nuevo</div>`;
+
+      const tags = (r.tipo_cocina || []).slice(0,2).map(t => `<span class="resto-tag">${ETIQUETA_COCINA[t] || t}</span>`).join('');
+
+      return `
+      <a class="resto-card" href="/r/${r.slug}">
+        <div class="resto-emoji">${emojiPara(r.tipo_cocina)}</div>
+        <div class="resto-info">
+          <div class="resto-name">${r.nombre}</div>
+          <div class="resto-meta">${r.ciudad || ''} ${tags}</div>
+        </div>
+        ${ratingHtml}
+      </a>`;
+    }).join('');
 
   } catch (err) {
-    console.error('Error cargando carta:', err);
+    console.error('Error cargando restaurantes:', err);
+    container.innerHTML = '<div class="empty-state">No se pudieron cargar los restaurantes.</div>';
   }
 }
 
-document.addEventListener('DOMContentLoaded', cargarRestaurante);
-
-// Recargar también después de enviar una reseña nueva (con un pequeño delay)
-const enviarResenaOriginal = enviarResena;
-enviarResena = async function() {
-  await enviarResenaOriginal();
-  setTimeout(cargarResenasPublicas, 500);
-};
-
-function mostrarMensaje(texto, tipo) {
-  const msg = document.getElementById('resena-msg');
-  msg.style.display = 'block';
-  msg.textContent = texto;
-  if (tipo === 'publica') {
-    msg.style.background = 'var(--green-pale)';
-    msg.style.color = 'var(--green)';
-    msg.style.border = '1px solid rgba(26,107,71,0.2)';
-  } else if (tipo === 'privada') {
-    msg.style.background = '#fff8e1';
-    msg.style.color = '#8a6d00';
-    msg.style.border = '1px solid rgba(200,151,58,0.3)';
-  } else {
-    msg.style.background = '#fdecea';
-    msg.style.color = '#b3261e';
-    msg.style.border = '1px solid rgba(179,38,30,0.2)';
-  }
-}
-
-async function enviarResena() {
-  const btn = document.getElementById('btn-enviar-resena');
-
-  // Validar que al menos comida y servicio estén valorados
-  if (ratings.comida === undefined || ratings.servicio === undefined) {
-    mostrarMensaje('Por favor valora al menos Comida y Tiempo de servicio antes de enviar.', 'error');
-    return;
-  }
-
-  const texto = document.getElementById('resena-texto').value.trim();
-
-  // Calcular media global (solo de las categorías valoradas)
-  const valores = Object.values(ratings);
-  const valGlobal = valores.reduce((a, b) => a + b, 0) / valores.length;
-
-  // LÓGICA SBF: pública si la media es >= 4, privada si es menor
-  const esPublica = valGlobal >= 4;
-
-  // Detección de alerta crítica por palabras clave
-  const alertaCritica = detectarAlertaCritica(texto);
-
-  // Si no es pública, identificamos qué categoría falló más
-  const categoriaQueja = !esPublica ? detectarCategoriaQueja(ratings) : null;
-
-  btn.disabled = true;
-  btn.textContent = 'Enviando...';
-
-  try {
-    const { data, error } = await supabaseClient
-      .from('resenas')
-      .insert({
-        restaurante_id: RESTAURANTE_ID,
-        val_comida: ratings.comida ?? null,
-        val_personal: ratings.personal ?? null,
-        val_limpieza: ratings.limpieza ?? null,
-        val_servicio: ratings.servicio ?? null,
-        val_global: Math.round(valGlobal * 10) / 10,
-        texto: texto || null,
-        es_publica: esPublica,
-        alerta_critica: alertaCritica,
-        categoria_queja: categoriaQueja
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    // Si hay alerta crítica, la registramos en la tabla de alertas
-    if (alertaCritica) {
-      await supabaseClient.from('alertas').insert({
-        restaurante_id: RESTAURANTE_ID,
-        resena_id: data.id,
-        tipo: 'detectada_por_palabra_clave',
-        texto_original: texto
-      });
-    }
-
-    // Feedback al cliente según el flujo SBF
-    if (esPublica) {
-      mostrarMensaje('¡Gracias! Tu reseña se ha publicado en el Muro de Recomendaciones. Has ganado 20 puntos 🎉', 'publica');
-    } else {
-      mostrarMensaje('Gracias por tu sinceridad. Hemos enviado tu comentario directamente al gerente para mejorar. Has ganado 20 puntos 🙏', 'privada');
-    }
-
-    btn.textContent = '✓ Reseña enviada';
-
-  } catch (err) {
-    console.error(err);
-    mostrarMensaje('Hubo un problema al enviar tu reseña. Inténtalo de nuevo.', 'error');
-    btn.disabled = false;
-    btn.textContent = 'Enviar reseña';
-  }
-}
+document.addEventListener('DOMContentLoaded', cargarRestaurantes);
 </script>
+
 </body>
 </html>
