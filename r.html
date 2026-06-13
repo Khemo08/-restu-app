@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restu · Descubre restaurantes en Salt y Girona</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  :root {
+    --green: #1a6b47;
+    --green-pale: #e8f5ee;
+    --gold: #c8973a;
+    --cream: #faf8f3;
+    --dark: #1a1a1a;
+    --mid: #6b6b66;
+    --border: #ece8de;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; font-family: 'DM Sans', -apple-system, sans-serif; }
+  body { background: var(--cream); color: var(--dark); }
+  .container { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #fff; }
+
+  .hero {
+    background: var(--green);
+    color: #fff;
+    padding: 32px 20px 28px;
+    text-align: center;
+  }
+  .logo { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 6px; }
+  .logo span { color: #a8e6c3; }
+  .tagline { font-size: 14px; opacity: 0.9; }
+
+  .search-bar {
+    margin: -18px 16px 0;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--mid);
+    position: relative;
+    z-index: 2;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 24px 20px 12px;
+  }
+
+  .resto-card {
+    display: flex;
+    gap: 14px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    align-items: center;
+  }
+  .resto-card:active { background: var(--green-pale); }
+
+  .resto-emoji {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--green-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  .resto-info { flex: 1; min-width: 0; }
+  .resto-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .resto-meta { font-size: 12px; color: var(--mid); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .resto-tag {
+    background: var(--green-pale); color: var(--green);
+    font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+  }
+  .resto-rating {
+    font-size: 13px; font-weight: 700; color: var(--gold);
+    display: flex; align-items: center; gap: 3px; flex-shrink: 0;
+  }
+
+  .empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--mid);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .footer {
+    padding: 32px 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--mid);
+  }
+  .footer a { color: var(--green); font-weight: 600; text-decoration: none; }
+
+  .bottom-space { height: 24px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="logo">res<span>tu</span></div>
+    <div class="tagline">Descubre los mejores restaurantes de Salt y Girona</div>
+  </div>
+
+  <div class="search-bar">
+    🔍 Busca por tipo de cocina, nombre o zona...
+  </div>
+
+  <div class="section-title">Restaurantes en Restu</div>
+
+  <div id="restaurantes-container">
+    <div class="empty-state">Cargando restaurantes...</div>
+  </div>
+
+  <div class="footer">
+    ¿Tienes un restaurante en Salt o Girona?<br>
+    <a href="https://wa.me/34000000000" target="_blank">Habla con nosotros · Prueba gratis 30 días</a>
+  </div>
+
+  <div class="bottom-space"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://zzmjgsbykygonuwjpkqn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6bWpnc2J5a3lnb251d2pwa3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMDcxNDgsImV4cCI6MjA5NjY4MzE0OH0.H1rf8qr9I4Y40ZazfnOVp7A5PiGZxMTaSweyBPbI358';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const EMOJI_COCINA = {
+  marroqui: '🫖',
+  senegales: '🌍',
+  halal: '🥩',
+  gambia: '🌍',
+  mediterraneo: '🌿',
+  espanol: '🥘'
+};
+
+const ETIQUETA_COCINA = {
+  marroqui: 'Marroquí',
+  senegales: 'Senegalés',
+  halal: 'Halal',
+  gambia: 'Gambiano',
+  mediterraneo: 'Mediterráneo',
+  espanol: 'Español'
+};
+
+function emojiPara(tipoCocina) {
+  if (!tipoCocina || !tipoCocina.length) return '🍽️';
+  for (const t of tipoCocina) {
+    if (EMOJI_COCINA[t]) return EMOJI_COCINA[t];
+  }
+  return '🍽️';
+}
+
+async function cargarRestaurantes() {
+  const container = document.getElementById('restaurantes-container');
+
+  try {
+    // Para cada restaurante, calculamos su valoración media real
+    const { data: restaurantes, error } = await supabaseClient
+      .from('restaurantes')
+      .select('*')
+      .eq('activo', true)
+      .order('fecha_creacion', { ascending: true });
+
+    if (error) throw error;
+
+    if (!restaurantes || restaurantes.length === 0) {
+      container.innerHTML = '<div class="empty-state">Próximamente nuevos restaurantes en Salt y Girona. 🌱</div>';
+      return;
+    }
+
+    const { data: resenas } = await supabaseClient
+      .from('resenas')
+      .select('restaurante_id, val_global, es_publica');
+
+    const ratingsPorRestaurante = {};
+    (resenas || []).forEach(r => {
+      if (!r.es_publica || !r.val_global) return;
+      if (!ratingsPorRestaurante[r.restaurante_id]) ratingsPorRestaurante[r.restaurante_id] = [];
+      ratingsPorRestaurante[r.restaurante_id].push(Number(r.val_global));
+    });
+
+    container.innerHTML = restaurantes.map(r => {
+      const ratings = ratingsPorRestaurante[r.id] || [];
+      const media = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length) : null;
+      const ratingHtml = media
+        ? `<div class="resto-rating">★ ${media.toFixed(1)}</div>`
+        : `<div class="resto-rating" style="color:var(--mid);font-size:11px;">Nuevo</div>`;
+
+      const tags = (r.tipo_cocina || []).slice(0,2).map(t => `<span class="resto-tag">${ETIQUETA_COCINA[t] || t}</span>`).join('');
+
+      return `
+      <a class="resto-card" href="/r/${r.slug}">
+        <div class="resto-emoji">${emojiPara(r.tipo_cocina)}</div>
+        <div class="resto-info">
+          <div class="resto-name">${r.nombre}</div>
+          <div class="resto-meta">${r.ciudad || ''} ${tags}</div>
+        </div>
+        ${ratingHtml}
+      </a>`;
+    }).join('');
+
+  } catch (err) {
+    console.error('Error cargando restaurantes:', err);
+    container.innerHTML = '<div class="empty-state">No se pudieron cargar los restaurantes.</div>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', cargarRestaurantes);
+</script>
+
+</body>
+</html>
