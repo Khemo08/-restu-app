@@ -628,7 +628,7 @@ body {
 .screen.active > *:nth-child(6) { animation-delay: 0.2s; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -1024,7 +1024,11 @@ async function cargarDatosRestaurante() {
   // QR
   document.getElementById('panel-qr-label').textContent = `QR de ${data.nombre}`;
   document.getElementById('panel-qr-url').textContent = `restu.es/r/${data.slug}`;
-  generarQR(data.slug, data.nombre);
+  try {
+    generarQR(data.slug, data.nombre);
+  } catch (err) {
+    console.error('Error generando QR (no crítico):', err);
+  }
 
   // Perfil
   document.getElementById('perfil-nombre').value = data.nombre || '';
@@ -1229,6 +1233,13 @@ let QR_SLUG_ACTUAL = '';
 function generarQR(slug, nombre) {
   QR_URL_ACTUAL = `https://restu.es/r/${slug}`;
   QR_SLUG_ACTUAL = slug;
+
+  if (typeof QRCode === 'undefined') {
+    console.error('QRCode no está disponible (librería no cargada)');
+    const box = document.getElementById('qr-box-container');
+    if (box) box.innerHTML = '<div style="color:#999;font-size:12px;padding:20px;text-align:center;">QR no disponible<br>(recarga la página)</div>';
+    return;
+  }
 
   const canvas = document.getElementById('qr-canvas');
 
