@@ -628,6 +628,7 @@ body {
 .screen.active > *:nth-child(6) { animation-delay: 0.2s; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -849,63 +850,15 @@ body {
 <div id="screen-qr" class="screen">
 
   <div class="qr-card">
-    <div class="qr-box">
-      <!-- QR simulado con SVG -->
-      <svg class="qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- Esquinas QR -->
-        <rect x="5" y="5" width="30" height="30" rx="3" fill="none" stroke="#000" stroke-width="4"/>
-        <rect x="12" y="12" width="16" height="16" fill="#000"/>
-        <rect x="65" y="5" width="30" height="30" rx="3" fill="none" stroke="#000" stroke-width="4"/>
-        <rect x="72" y="12" width="16" height="16" fill="#000"/>
-        <rect x="5" y="65" width="30" height="30" rx="3" fill="none" stroke="#000" stroke-width="4"/>
-        <rect x="12" y="72" width="16" height="16" fill="#000"/>
-        <!-- Datos QR simulados -->
-        <rect x="42" y="5" width="5" height="5" fill="#000"/>
-        <rect x="50" y="5" width="5" height="5" fill="#000"/>
-        <rect x="42" y="13" width="5" height="5" fill="#000"/>
-        <rect x="50" y="13" width="5" height="5" fill="#000"/>
-        <rect x="58" y="13" width="5" height="5" fill="#000"/>
-        <rect x="5" y="42" width="5" height="5" fill="#000"/>
-        <rect x="13" y="42" width="5" height="5" fill="#000"/>
-        <rect x="5" y="50" width="5" height="5" fill="#000"/>
-        <rect x="13" y="50" width="5" height="5" fill="#000"/>
-        <rect x="42" y="42" width="5" height="5" fill="#000"/>
-        <rect x="50" y="42" width="5" height="5" fill="#000"/>
-        <rect x="58" y="42" width="5" height="5" fill="#000"/>
-        <rect x="42" y="50" width="5" height="5" fill="#000"/>
-        <rect x="58" y="50" width="5" height="5" fill="#000"/>
-        <rect x="42" y="58" width="5" height="5" fill="#000"/>
-        <rect x="50" y="58" width="5" height="5" fill="#000"/>
-        <rect x="65" y="42" width="5" height="5" fill="#000"/>
-        <rect x="73" y="42" width="5" height="5" fill="#000"/>
-        <rect x="65" y="50" width="5" height="5" fill="#000"/>
-        <rect x="81" y="50" width="5" height="5" fill="#000"/>
-        <rect x="65" y="58" width="5" height="5" fill="#000"/>
-        <rect x="73" y="58" width="5" height="5" fill="#000"/>
-        <rect x="81" y="58" width="5" height="5" fill="#000"/>
-        <rect x="5" y="65" width="0" height="0" fill="#000"/>
-        <rect x="42" y="65" width="5" height="5" fill="#000"/>
-        <rect x="50" y="65" width="5" height="5" fill="#000"/>
-        <rect x="42" y="73" width="5" height="5" fill="#000"/>
-        <rect x="58" y="73" width="5" height="5" fill="#000"/>
-        <rect x="50" y="81" width="5" height="5" fill="#000"/>
-        <rect x="58" y="81" width="5" height="5" fill="#000"/>
-        <rect x="65" y="65" width="5" height="5" fill="#000"/>
-        <rect x="81" y="65" width="5" height="5" fill="#000"/>
-        <rect x="73" y="73" width="5" height="5" fill="#000"/>
-        <rect x="65" y="81" width="5" height="5" fill="#000"/>
-        <rect x="81" y="81" width="5" height="5" fill="#000"/>
-        <!-- Logo restu en centro -->
-        <rect x="43" y="43" width="14" height="14" rx="2" fill="white"/>
-        <text x="50" y="53" text-anchor="middle" font-size="6" font-weight="bold" fill="#1a6b47" font-family="sans-serif">tp</text>
-      </svg>
+    <div class="qr-box" id="qr-box-container" style="display:flex;align-items:center;justify-content:center;">
+      <canvas id="qr-canvas"></canvas>
     </div>
     <div class="qr-label" id="panel-qr-label">QR de tu restaurante</div>
     <div class="qr-sub" id="panel-qr-url" style="font-weight:600;color:var(--green);">restu.es/r/...</div>
     <div class="qr-sub">Coloca este código en tus mesas, barra y entrada. Tus clientes lo escanean y ven tu carta y perfil.</div>
     <div class="qr-btns">
-      <button class="qr-btn qr-btn-primary">⬇ Descargar</button>
-      <button class="qr-btn qr-btn-secondary">🖨 Imprimir</button>
+      <button class="qr-btn qr-btn-primary" onclick="descargarQR()">⬇ Descargar</button>
+      <button class="qr-btn qr-btn-secondary" onclick="imprimirQR()">🖨 Imprimir</button>
     </div>
   </div>
 
@@ -1071,6 +1024,7 @@ async function cargarDatosRestaurante() {
   // QR
   document.getElementById('panel-qr-label').textContent = `QR de ${data.nombre}`;
   document.getElementById('panel-qr-url').textContent = `restu.es/r/${data.slug}`;
+  generarQR(data.slug, data.nombre);
 
   // Perfil
   document.getElementById('perfil-nombre').value = data.nombre || '';
@@ -1264,6 +1218,73 @@ document.addEventListener('DOMContentLoaded', async function() {
   const ok = await cargarDatosRestaurante();
   if (ok) await cargarPanelDueno();
 });
+
+// ============================================
+// GENERAR, DESCARGAR E IMPRIMIR QR REAL
+// ============================================
+
+let QR_URL_ACTUAL = '';
+let QR_SLUG_ACTUAL = '';
+
+function generarQR(slug, nombre) {
+  QR_URL_ACTUAL = `https://restu.es/r/${slug}`;
+  QR_SLUG_ACTUAL = slug;
+
+  const canvas = document.getElementById('qr-canvas');
+
+  QRCode.toCanvas(canvas, QR_URL_ACTUAL, {
+    width: 200,
+    margin: 1,
+    color: {
+      dark: '#0f1a14',
+      light: '#ffffff'
+    }
+  }, function (error) {
+    if (error) console.error('Error generando QR:', error);
+  });
+}
+
+function descargarQR() {
+  const canvas = document.getElementById('qr-canvas');
+
+  // Generamos una versión grande (1000px) para imprimir con buena calidad
+  const canvasGrande = document.createElement('canvas');
+  QRCode.toCanvas(canvasGrande, QR_URL_ACTUAL, {
+    width: 1000,
+    margin: 2,
+    color: { dark: '#0f1a14', light: '#ffffff' }
+  }, function (error) {
+    if (error) { console.error(error); return; }
+
+    const link = document.createElement('a');
+    link.download = `restu-qr-${QR_SLUG_ACTUAL}.png`;
+    link.href = canvasGrande.toDataURL('image/png');
+    link.click();
+  });
+}
+
+function imprimirQR() {
+  const canvas = document.getElementById('qr-canvas');
+  const dataUrl = canvas.toDataURL('image/png');
+  const nombre = RESTAURANTE_DATA ? RESTAURANTE_DATA.nombre : '';
+
+  const ventana = window.open('', '_blank');
+  ventana.document.write(`
+    <html>
+      <head><title>QR - ${nombre}</title></head>
+      <body style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;">
+        <h2 style="margin-bottom:8px;">${nombre}</h2>
+        <p style="color:#666;margin-bottom:20px;">${QR_URL_ACTUAL}</p>
+        <img src="${dataUrl}" style="width:300px;height:300px;" />
+        <p style="margin-top:20px;font-weight:bold;">Escanea y descubre nuestra carta</p>
+        <script>
+          window.onload = function() { window.print(); }
+        </script>
+      </body>
+    </html>
+  `);
+  ventana.document.close();
+}
 </script>
 </body>
 </html>
