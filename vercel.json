@@ -1,5 +1,12 @@
 {
   "rewrites": [
-    { "source": "/r/:slug", "destination": "/r.html" }
+    {
+      "source": "/r/:slug",
+      "destination": "/r.html"
+    },
+    {
+      "source": "/panel/:slug",
+      "destination": "/restu-panel-dueno.html"
+    }
   ]
 }
