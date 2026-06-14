@@ -634,7 +634,7 @@ body {
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="logo">res<span>tu</span></div>
-  <div class="resto-tag">Al-Waha · Salt</div>
+  <div class="resto-tag" id="panel-resto-tag">Cargando...</div>
   <div class="notif-btn">
     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
     <div class="notif-dot"></div>
@@ -653,12 +653,12 @@ body {
 <!-- ═══ RESUMEN ═══ -->
 <div id="screen-resumen" class="screen active">
 
-  <div class="plan-badge">
+  <div class="plan-badge" id="panel-plan-badge">
     <div>
-      <div class="plan-name">⭐ Pack Crecimiento</div>
-      <div class="plan-sub">Renovación: 1 de junio · Activo</div>
+      <div class="plan-name" id="panel-plan-name">⭐ Pack Crecimiento</div>
+      <div class="plan-sub" id="panel-plan-sub">Renovación: 1 de junio · Activo</div>
     </div>
-    <div class="plan-price">129€/mes</div>
+    <div class="plan-price" id="panel-plan-price">129€/mes</div>
   </div>
 
   <div class="slabel">Este mes · Junio 2026</div>
@@ -900,7 +900,8 @@ body {
         <text x="50" y="53" text-anchor="middle" font-size="6" font-weight="bold" fill="#1a6b47" font-family="sans-serif">tp</text>
       </svg>
     </div>
-    <div class="qr-label">QR de Al-Waha</div>
+    <div class="qr-label" id="panel-qr-label">QR de tu restaurante</div>
+    <div class="qr-sub" id="panel-qr-url" style="font-weight:600;color:var(--green);">restu.es/r/...</div>
     <div class="qr-sub">Coloca este código en tus mesas, barra y entrada. Tus clientes lo escanean y ven tu carta y perfil.</div>
     <div class="qr-btns">
       <button class="qr-btn qr-btn-primary">⬇ Descargar</button>
@@ -954,29 +955,23 @@ body {
   <div class="perfil-card">
     <div class="form-group">
       <label class="form-label">Nombre del restaurante</label>
-      <input type="text" class="form-input" value="Al-Waha">
+      <input type="text" class="form-input" id="perfil-nombre" value="">
     </div>
     <div class="form-group">
       <label class="form-label">Dirección</label>
-      <input type="text" class="form-input" value="Carrer Major, 14 · Salt">
+      <input type="text" class="form-input" id="perfil-direccion" value="">
     </div>
     <div class="form-group">
       <label class="form-label">Teléfono / WhatsApp</label>
-      <input type="text" class="form-input" value="+34 972 XXX XXX">
+      <input type="text" class="form-input" id="perfil-telefono" value="">
     </div>
     <div class="form-group">
       <label class="form-label">Horario</label>
-      <input type="text" class="form-input" value="Lun–Vie 12:00–23:00 · Sáb–Dom 11:00–23:30">
+      <input type="text" class="form-input" id="perfil-horario" value="">
     </div>
     <div class="form-group">
       <label class="form-label">Tipo de cocina</label>
-      <div class="tag-selector">
-        <span class="tag-opt selected" onclick="toggleTag(this)">Senegalés</span>
-        <span class="tag-opt selected" onclick="toggleTag(this)">Marroquí</span>
-        <span class="tag-opt" onclick="toggleTag(this)">Africano</span>
-        <span class="tag-opt selected" onclick="toggleTag(this)">Halal</span>
-        <span class="tag-opt" onclick="toggleTag(this)">Mediterráneo</span>
-        <span class="tag-opt" onclick="toggleTag(this)">Kebab</span>
+      <div class="tag-selector" id="perfil-tags-cocina">
       </div>
     </div>
     <div class="form-group">
@@ -1017,9 +1012,81 @@ function toggleTag(el) {
 
 const SUPABASE_URL = 'https://zzmjgsbykygonuwjpkqn.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6bWpnc2J5a3lnb251d2pwa3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMDcxNDgsImV4cCI6MjA5NjY4MzE0OH0.H1rf8qr9I4Y40ZazfnOVp7A5PiGZxMTaSweyBPbI358';
-const RESTAURANTE_ID = '49476c71-c604-4b80-abe0-0a2bd15f3d9f'; // Al-Waha
+let RESTAURANTE_ID = null;
+let RESTAURANTE_DATA = null;
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const NOMBRES_PLAN = {
+  prueba: { nombre: '🎁 Mes de prueba gratuito', precio: '0€/mes' },
+  esencial: { nombre: '🥉 Pack Esencial', precio: '49€/mes' },
+  crecimiento: { nombre: '⭐ Pack Crecimiento', precio: '129€/mes' }
+};
+
+const ETIQUETA_COCINA = {
+  marroqui: 'Marroquí', senegales: 'Senegalés', halal: 'Halal',
+  gambia: 'Gambiano', mediterraneo: 'Mediterráneo', espanol: 'Español'
+};
+
+const NOMBRES_IDIOMAS = { es: 'Español', fr: 'Français', ar: 'العربية', en: 'English', wo: 'Wolof' };
+
+function getSlugFromURL() {
+  // Espera URLs tipo /panel/al-waha
+  const partes = window.location.pathname.split('/').filter(Boolean);
+  const idx = partes.indexOf('panel');
+  if (idx !== -1 && partes[idx + 1]) return partes[idx + 1];
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('slug')) return params.get('slug');
+  return 'al-waha';
+}
+
+async function cargarDatosRestaurante() {
+  const slug = getSlugFromURL();
+
+  const { data, error } = await supabaseClient
+    .from('restaurantes')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (error || !data) {
+    document.getElementById('panel-resto-tag').textContent = 'Restaurante no encontrado';
+    return false;
+  }
+
+  RESTAURANTE_DATA = data;
+  RESTAURANTE_ID = data.id;
+
+  document.title = 'Restu · Panel ' + data.nombre;
+  document.getElementById('panel-resto-tag').textContent = `${data.nombre} · ${data.ciudad || ''}`;
+
+  // Plan badge
+  const plan = NOMBRES_PLAN[data.plan] || NOMBRES_PLAN.prueba;
+  document.getElementById('panel-plan-name').textContent = plan.nombre;
+  document.getElementById('panel-plan-price').textContent = plan.precio;
+  document.getElementById('panel-plan-sub').textContent = data.plan === 'prueba'
+    ? 'Sin compromiso · Cancela cuando quieras'
+    : `Renovación mensual · Activo`;
+
+  // QR
+  document.getElementById('panel-qr-label').textContent = `QR de ${data.nombre}`;
+  document.getElementById('panel-qr-url').textContent = `restu.es/r/${data.slug}`;
+
+  // Perfil
+  document.getElementById('perfil-nombre').value = data.nombre || '';
+  document.getElementById('perfil-direccion').value = data.direccion || '';
+  document.getElementById('perfil-telefono').value = data.telefono || '';
+  document.getElementById('perfil-horario').value = data.horario || '';
+
+  const tagsCocinaContainer = document.getElementById('perfil-tags-cocina');
+  const todasCocinas = ['marroqui','senegales','halal','gambia','mediterraneo','espanol'];
+  tagsCocinaContainer.innerHTML = todasCocinas.map(c => {
+    const selected = (data.tipo_cocina || []).includes(c) ? 'selected' : '';
+    return `<span class="tag-opt ${selected}" onclick="toggleTag(this)">${ETIQUETA_COCINA[c]}</span>`;
+  }).join('');
+
+  return true;
+}
 
 // Umbrales de la Regla de Reincidencia (ciclo 30 días)
 const UMBRALES = { comida: 3, servicio: 5, limpieza: 2, personal: 3 };
@@ -1193,7 +1260,10 @@ async function cargarPanelDueno() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', cargarPanelDueno);
+document.addEventListener('DOMContentLoaded', async function() {
+  const ok = await cargarDatosRestaurante();
+  if (ok) await cargarPanelDueno();
+});
 </script>
 </body>
 </html>
