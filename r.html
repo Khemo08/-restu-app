@@ -126,8 +126,17 @@
     font-weight: 800;
     font-size: 26px;
     color: white;
-    line-height: 1.1;
+    line-height: 1.15;
     margin-bottom: 6px;
+    word-break: break-word;
+  }
+
+  .resto-name.long {
+    font-size: 19px;
+  }
+
+  .resto-name.medium {
+    font-size: 22px;
   }
 
   .resto-meta {
@@ -1074,7 +1083,14 @@ async function cargarRestaurante() {
 
     // Título y cabecera
     document.title = 'Restu · ' + data.nombre;
-    document.getElementById('resto-name').textContent = data.nombre;
+    const nombreEl = document.getElementById('resto-name');
+    nombreEl.textContent = data.nombre;
+    nombreEl.classList.remove('long', 'medium');
+    if (data.nombre.length > 22) {
+      nombreEl.classList.add('long');
+    } else if (data.nombre.length > 14) {
+      nombreEl.classList.add('medium');
+    }
     document.getElementById('resto-direccion').textContent = data.direccion || data.ciudad || '';
     document.getElementById('resto-horario').textContent = data.horario ? data.horario.split('·')[0].trim() : 'Horario no disponible';
 
@@ -1261,8 +1277,15 @@ async function cargarResenasPublicas() {
       document.getElementById('bar-servicio').style.width = (mServicio/5*100) + '%';
     } else {
       document.getElementById('rating-num').textContent = '–';
+      document.getElementById('rating-stars').textContent = '☆☆☆☆☆';
       document.getElementById('rating-count').textContent = '0 reseñas';
       document.getElementById('resenas-titulo').textContent = '0 reseñas';
+      document.getElementById('resenas-rating-mini').textContent = '★ –';
+
+      ['comida','personal','limpieza','servicio'].forEach(cat => {
+        document.getElementById('val-' + cat).textContent = '–';
+        document.getElementById('bar-' + cat).style.width = '0%';
+      });
     }
 
   } catch (err) {
